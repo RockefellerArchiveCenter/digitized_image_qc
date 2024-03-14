@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block h1_title %}
+Complete QC and Assign Rights for Digitized Items
+{% endblock %}
+
+{% block content %}
+{% if object_list|length %}
+<!-- Search -->
+
+<form id="package-list-table" action="{% url 'package-bulk-approve' %}" method="get">
+    <button type="submit" class="btn btn--sm btn--blue btn--list">Assign Rights to Selected Items</button>
+    <button type="submit" formaction="{% url 'package-bulk-reject' %}" class="btn btn--sm btn--orange btn--list">Reject Selected Items</button>
+    <table class="table table--package-list" data-sortable>
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th data-sortable-type="numeric">AV #</th>
+                <th>Title</th>
+                <th>Format</th>
+                <th>Collection</th>
+                <th>Multiple Master Files?</th>
+                <th>Possible Duplicate?</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+            <tr>
+                <td>
+                    <input
+                        class="select-package"
+                        type="checkbox"
+                        id="{{object.pk}}"
+                        name="{{object.pk}}"
+                    />
+                </td>
+                <td data-value="{{object.av_number_normalized}}"><a href="{% url 'package-detail' pk=object.pk %}">{{object.av_number}}</a></td>
+                <td>{{object.title}}</td>
+                <td>{{object.get_type_display}}</td>
+                <td>{{object.resource_title}}</td>
+                <td>{{object.multiple_masters}}</td>
+                <td>{{object.possible_duplicate}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+<!-- Pagination -->
+{% else %}
+<p>No files to QC</p>
+{% endif %}
+{% endblock %}
+
+{% block modals %}{% endblock %}
