@@ -1,15 +1,15 @@
-# digitized_av_qc
-An application to review and assign rights statements to digitized audiovisual assets.
+# digitized_image_qc
+An application to review and assign rights statements to digitized still image and textual assets.
 
 ## Getting started
 
 Clone the repository to a new directory:
 
-    $ git clone git@github.com:RockefellerArchiveCenter/digitized_av_qc
+    $ git clone git@github.com:RockefellerArchiveCenter/digitized_image_qc
 
 Move to the root directory of the repository:
 
-    cd digitized_av_qc/
+    cd digitized_image_qc/
 
 Start the app with Docker Compose:
 
