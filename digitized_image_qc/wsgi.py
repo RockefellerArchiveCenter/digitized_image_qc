@@ -1,5 +1,5 @@
 """
-WSGI config for digitized_av_qc project.
+WSGI config for digitized_image_qc project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "digitized_av_qc.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "digitized_image_qc.settings")
 
 application = get_wsgi_application()

@@ -20,7 +20,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: base
-    command: /var/www/digitized-av-qc/entrypoint.dev.sh
+    command: /var/www/digitized-image-qc/entrypoint.dev.sh
     environment:
       - ALLOWED_HOSTS=localhost
       - APPLICATION_PORT=${APPLICATION_PORT:-80}
@@ -35,11 +35,11 @@ services:
       - AQUILA_BASEURL=http://aquila.dev.rockarch.org # BaseURL for Aquila instance
       - AWS_ACCESS_KEY_ID=foo # Access Key ID for AWS user
       - AWS_SECRET_ACCESS_KEY=bar # Secret Access Key for AWS user
-      - AWS_ROLE_ARN=arn:aws:iam::123456789012:role/digitized-av-role # Role ARN for role to be assumed by AWS user
+      - AWS_ROLE_ARN=arn:aws:iam::123456789012:role/digitized-image-role # Role ARN for role to be assumed by AWS user
       - AWS_REGION=us-east-1 # AWS region in which infrastructure is located (string)
-      - AWS_SNS_TOPIC=arn:aws:sns:us-east-1:123456789012:digitized-av-events # ARN for SNS Topic to be posted to (string)
+      - AWS_SNS_TOPIC=arn:aws:sns:us-east-1:123456789012:digitized-image-events # ARN for SNS Topic to be posted to (string)
     volumes:
-      - .:/var/www/digitized-av-qc
+      - .:/var/www/digitized-image-qc
     ports:
       - "${APPLICATION_PORT:-80}:${APPLICATION_PORT:-80}"
     depends_on:
