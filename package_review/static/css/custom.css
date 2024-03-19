@@ -1,0 +1,86 @@
+.table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead th:nth-child(1) {
+    width: 10%;
+}
+
+.table thead th:nth-child(2) {
+    width: auto;
+}
+
+.table thead th:nth-child(3) {
+    width: auto;
+}
+
+.table thead th:nth-child(4) {
+    width: 15%;
+}
+
+.table th,
+td {
+    padding: 20px;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #e3e1dd;
+}
+  
+.table tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.table--package-list input[type=checkbox] {
+    width: unset;
+    margin-left: 10px;
+}  
+
+.modal__overlay {
+    display: none;
+}
+
+.modal__overlay.is-open {
+    display: block;
+}
+
+form {
+    display: inline;
+}
+
+.checkbox--rights {
+    width: auto;
+}
+
+.modal--small {
+    bottom: 30%;
+    left: 30%;
+    right: 30%;
+    top: 30%;
+}
+
+.list--unstyled {
+    margin-top: 0;
+}
+
+dt:before {
+    content: "";
+    display: block;
+}
+
+dt {
+    display: inline;
+    font-weight: bold;
+}
+
+dd {
+    display: inline;
+    margin-left: 5px;
+}
+
+.pdf__viewer {
+    width: 100%;
+    height: 90vh;
+}
