@@ -32,6 +32,8 @@ charset-normalizer==3.3.0
     # via requests
 cryptography==41.0.4
     # via moto
+directory-tree==0.0.4
+    # via -r requirements.in
 django==4.2.5
     # via -r requirements.in
 idna==3.4

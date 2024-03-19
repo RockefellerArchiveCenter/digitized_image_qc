@@ -11,18 +11,6 @@ class ArchivesSpaceClient(ASpace):
         super().__init__(**kwargs)
         self.repository = kwargs['repository']
 
-    def get_av_number(self, instances):
-        """Parse the AV number for an ArchivesSpace object.
-
-        Args:
-            instances (list): ArchivesSpace instance data.
-
-        Returns:
-            av_number (string): AV number for the object.
-        """
-        av_numbers = [instance.get('sub_container', {}).get('indicator_2') for instance in instances if instance.get('sub_container', {}).get('indicator_2', '').startswith('AV')]
-        return ', '.join(number for number in av_numbers if number is not None)
-
     def get_package_data(self, refid):
         """Fetch data about an object in ArchivesSpace.
 
@@ -37,12 +25,11 @@ class ArchivesSpaceClient(ASpace):
             if len(results['archival_objects']) != 1:
                 raise Exception(f'Expecting to get one result for ref id {refid} but got {len(results["archival_objects"])} instead.')
             object = results['archival_objects'][0]['_resolved']
-            av_number = self.get_av_number(object['instances'])
             object_uri = object['uri']
             resource = object['resource']['_resolved']
             resource_title = resource['title']
             resource_uri = resource['uri']
-            return object['display_string'], av_number, object_uri, resource_title, resource_uri
+            return object['display_string'], object_uri, resource_title, resource_uri
         except KeyError:
             raise Exception(f'Unable to fetch results for {refid}. Got results {results}')
 
@@ -87,10 +74,6 @@ class AWSClient(object):
             }
         }
         if package:
-            attributes['format'] = {
-                'DataType': 'String',
-                'StringValue': package.get_type_display(),
-            }
             attributes['refid'] = {
                 'DataType': 'String',
                 'StringValue': package.refid,

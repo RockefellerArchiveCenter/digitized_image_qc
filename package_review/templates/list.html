@@ -15,11 +15,8 @@ Complete QC and Assign Rights for Digitized Items
         <thead>
             <tr>
                 <th>Select</th>
-                <th data-sortable-type="numeric">AV #</th>
-                <th>Title</th>
-                <th>Format</th>
+                <th data-sortable-type="string">Title</th>
                 <th>Collection</th>
-                <th>Multiple Master Files?</th>
                 <th>Possible Duplicate?</th>
             </tr>
         </thead>
@@ -34,11 +31,8 @@ Complete QC and Assign Rights for Digitized Items
                         name="{{object.pk}}"
                     />
                 </td>
-                <td data-value="{{object.av_number_normalized}}"><a href="{% url 'package-detail' pk=object.pk %}">{{object.av_number}}</a></td>
-                <td>{{object.title}}</td>
-                <td>{{object.get_type_display}}</td>
+                <td data-value="{{object.title}}"><a href="{% url 'package-detail' pk=object.pk %}">{{object.title}}</a></td>
                 <td>{{object.resource_title}}</td>
-                <td>{{object.multiple_masters}}</td>
                 <td>{{object.possible_duplicate}}</td>
             </tr>
             {% endfor %}

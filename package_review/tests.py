@@ -18,8 +18,8 @@ from .models import Package, RightsStatement
 
 FIXTURE_DIR = "fixtures"
 RIGHTS_DATA = [("1", "foo"), ("2", "bar")]
-PACKAGE_DATA = [("foo", "av 123", 123.45, 123.45, False, "9ba10e5461d401517b0e1a53d514ec87", Package.AUDIO),
-                ("bar", "av 321", 543.21, 543.21, True, "f7d3dd6dc9c4732fa17dbd88fbe652b6", Package.VIDEO)]
+PACKAGE_DATA = [("foo", "9ba10e5461d401517b0e1a53d514ec87", "9ba10e5461d401517b0e1a53d514ec87/\n----- 9ba10e5461d401517b0e1a53d514ec87_0001.pdf"),
+                ("bar", "f7d3dd6dc9c4732fa17dbd88fbe652b6", "f7d3dd6dc9c4732fa17dbd88fbe652b6/\n----- f7d3dd6dc9c4732fa17dbd88fbe652b6_0001.pdf")]
 
 
 def create_rights_statements():
@@ -30,15 +30,11 @@ def create_rights_statements():
 
 
 def create_packages():
-    for title, av_number, duration_access, duration_master, multiple_masters, refid, type in PACKAGE_DATA:
+    for title, refid, tree in PACKAGE_DATA:
         Package.objects.create(
             title=title,
-            av_number=av_number,
-            duration_access=duration_access,
-            duration_master=duration_master,
-            multiple_masters=multiple_masters,
             refid=refid,
-            type=type,
+            tree=tree,
             process_status=Package.PENDING)
 
 
@@ -67,12 +63,6 @@ class ArchivesSpaceClientTests(TestCase):
         self.assertEqual(
             self.as_client.repository,
             '2')
-
-    def test_get_av_number(self):
-        """Asserts AV number is parsed correctly."""
-        instances = [{"sub_container": {"indicator_2": "AV 1234"}}, {"sub_container": {}}]
-        av_number = self.as_client.get_av_number(instances)
-        self.assertEqual(av_number, "AV 1234")
 
 
 class AWSClientTests(TestCase):
@@ -109,7 +99,6 @@ class AWSClientTests(TestCase):
         queue = sqs_conn.get_queue_by_name(QueueName="test-queue")
         messages = queue.receive_messages(MaxNumberOfMessages=1)
         message_body = json.loads(messages[0].body)
-        self.assertEqual(message_body['MessageAttributes']['format']['Value'], package.get_type_display())
         self.assertEqual(message_body['MessageAttributes']['outcome']['Value'], 'SUCCESS')
         self.assertEqual(message_body['MessageAttributes']['refid']['Value'], package.refid)
         self.assertEqual(message_body['MessageAttributes']['rights_ids']['Value'], "1,2")
@@ -120,35 +109,26 @@ class DiscoverPackagesCommandTests(TestCase):
     def setUp(self):
         copy_binaries()
 
-    def test_get_type(self):
-        """Asserts correct types are returned."""
-        for (refid, expected) in [("9ba10e5461d401517b0e1a53d514ec87", Package.VIDEO), ("f7d3dd6dc9c4732fa17dbd88fbe652b6", Package.AUDIO)]:
-            output = discover_packages.Command()._get_type(Path(settings.BASE_STORAGE_DIR, refid))
-            self.assertEqual(output, expected)
-
-        with self.assertRaises(Exception):
-            discover_packages.Command()._get_type(Path("1234"))
-
-    def test_get_duration(self):
-        for (filename, expected) in [("9ba10e5461d401517b0e1a53d514ec87.mp4", 5.759), ("f7d3dd6dc9c4732fa17dbd88fbe652b6.mp3", 27.252)]:
-            output = discover_packages.Command()._get_duration([Path(settings.BASE_STORAGE_DIR, filename.split('.')[0], filename)])
-            self.assertEqual(output, expected)
+    def test_get_tree(self):
+        for refid in ["9ba10e5461d401517b0e1a53d514ec87", "f7d3dd6dc9c4732fa17dbd88fbe652b6"]:
+            tree = discover_packages.Command()._get_dir_tree(Path("package_review", FIXTURE_DIR, "packages", refid))
+            self.assertIsInstance(tree, str)
+            self.assertIn(refid, tree)
+            self.assertIn('master', tree)
+            self.assertIn('master_edited', tree)
+            self.assertIn('service_edited', tree)
 
     @mock_sts
     @mock_ssm
     @patch('package_review.clients.ArchivesSpaceClient.__init__')
-    @patch('package_review.management.commands.discover_packages.Command._get_duration')
-    @patch('package_review.management.commands.discover_packages.Command._has_multiple_masters')
     @patch('package_review.clients.ArchivesSpaceClient.get_package_data')
     @patch('package_review.clients.AWSClient.deliver_message')
     @patch('package_review.clients.AWSClient.get_client_with_role')
-    def test_handle(self, mock_client, mock_message, mock_package_data, mock_masters, mock_duration, mock_init):
+    def test_handle(self, mock_client, mock_message, mock_package_data, mock_init):
         """Asserts cron produces expected results."""
         expected_len = len(list(Path(settings.BASE_STORAGE_DIR).iterdir()))
         mock_init.return_value = None
-        mock_masters.return_value = False
-        mock_duration.return_value = 123.45
-        mock_package_data.return_value = 'object_title', 'av_number', 'object_uri', 'resource_title', 'resource_uri'
+        mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri'
 
         discover_packages.Command().handle()
         mock_init.assert_called_once()
@@ -156,11 +136,6 @@ class DiscoverPackagesCommandTests(TestCase):
         mock_message.assert_not_called()
         self.assertEqual(mock_package_data.call_count, expected_len)
         self.assertEqual(Package.objects.all().count(), expected_len)
-        for package in Package.objects.all():
-            self.assertEqual(package.multiple_masters, False)
-            self.assertEqual(package.duration_access, 123.45)
-            self.assertEqual(package.duration_master, 123.45)
-
         discover_packages.Command().handle()
         mock_message.assert_not_called()
 
