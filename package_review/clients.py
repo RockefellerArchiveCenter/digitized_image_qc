@@ -61,7 +61,7 @@ class AWSClient(object):
         assumed_role_session = assume_role(session, role_arn)
         return assumed_role_session.client(resource)
 
-    def deliver_message(self, sns_topic, package, message, outcome, rights_ids=None):
+    def deliver_message(self, sns_topic, package, message, outcome, traceback=None, rights_ids=None):
         """Delivers message to SNS Topic."""
         attributes = {
             'service': {
@@ -77,6 +77,11 @@ class AWSClient(object):
             attributes['refid'] = {
                 'DataType': 'String',
                 'StringValue': package.refid,
+            }
+        if traceback:
+            attributes['traceback'] = {
+                'DataType': 'String',
+                'StringValue': traceback,
             }
         if rights_ids:
             attributes['rights_ids'] = {

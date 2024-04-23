@@ -65,8 +65,9 @@ class Command(BaseCommand):
                     sns_client.deliver_message(
                         settings.AWS['sns_topic'],
                         None,
-                        f'Error discovering refid {refid}\n\n{exception}',
-                        'FAILURE')
+                        f'Error discovering refid {refid}',
+                        'FAILURE',
+                        traceback=exception)
                     continue
 
         message = f'Packages created: {", ".join(created_list)}' if len(created_list) else 'No new packages to discover.'

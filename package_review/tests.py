@@ -94,7 +94,7 @@ class AWSClientTests(TestCase):
             package,
             "This is a message",
             "SUCCESS",
-            "1,2")
+            rights_ids="1,2")
 
         queue = sqs_conn.get_queue_by_name(QueueName="test-queue")
         messages = queue.receive_messages(MaxNumberOfMessages=1)
