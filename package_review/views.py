@@ -78,7 +78,7 @@ class PackageApproveView(PackageActionView):
                 package,
                 self.message,
                 self.outcome,
-                rights_ids)
+                rights_ids=rights_ids)
             package.process_status = Package.APPROVED
             package.rights_ids = rights_ids
             package.save()
