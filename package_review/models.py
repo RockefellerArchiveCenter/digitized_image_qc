@@ -15,6 +15,7 @@ class Package(models.Model):
     uri = models.CharField(max_length=255)
     resource_title = models.CharField(max_length=255)
     resource_uri = models.CharField(max_length=255)
+    undated_object = models.BooleanField(default=False)
     possible_duplicate = models.BooleanField(default=False)
     refid = models.CharField(max_length=32)
     tree = models.JSONField(null=True, blank=True)
