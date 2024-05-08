@@ -11,6 +11,25 @@ class ArchivesSpaceClient(ASpace):
         super().__init__(**kwargs)
         self.repository = kwargs['repository']
 
+    def has_structured_dates(self, dates_array):
+        """Parses date array to determine if structured dates are available.
+
+        Args:
+            dates_array (dict): Dates data from ArchivesSpace
+
+        Returns:
+            Boolean
+        """
+        start_dates = []
+        end_dates = []
+        for date in dates_array:
+            start_dates.append(date.get('begin'))
+            if date['date_type'] == 'single':
+                end_dates.append(date.get('begin'))
+            else:
+                end_dates.append(date.get('end'))
+        return bool(all([len(list(filter(None, start_dates))), len(list(filter(None, end_dates)))]))
+
     def get_package_data(self, refid):
         """Fetch data about an object in ArchivesSpace.
 
@@ -29,7 +48,8 @@ class ArchivesSpaceClient(ASpace):
             resource = object['resource']['_resolved']
             resource_title = resource['title']
             resource_uri = resource['uri']
-            return object['display_string'], object_uri, resource_title, resource_uri
+            undated_object = self.has_structured_dates(object['dates'])
+            return object['display_string'], object_uri, resource_title, resource_uri, undated_object
         except KeyError:
             raise Exception(f'Unable to fetch results for {refid}. Got results {results}')
 
@@ -61,7 +81,7 @@ class AWSClient(object):
         assumed_role_session = assume_role(session, role_arn)
         return assumed_role_session.client(resource)
 
-    def deliver_message(self, sns_topic, package, message, outcome, rights_ids=None):
+    def deliver_message(self, sns_topic, package, message, outcome, traceback=None, rights_ids=None):
         """Delivers message to SNS Topic."""
         attributes = {
             'service': {
@@ -77,6 +97,11 @@ class AWSClient(object):
             attributes['refid'] = {
                 'DataType': 'String',
                 'StringValue': package.refid,
+            }
+        if traceback:
+            attributes['traceback'] = {
+                'DataType': 'String',
+                'StringValue': traceback,
             }
         if rights_ids:
             attributes['rights_ids'] = {

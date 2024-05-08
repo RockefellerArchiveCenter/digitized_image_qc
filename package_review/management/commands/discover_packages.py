@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from package_review.clients import ArchivesSpaceClient, AWSClient
+from package_review.helpers import get_config
 from package_review.models import Package
 
 logging.basicConfig(
@@ -25,17 +26,8 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f'Root directory {str(settings.BASE_STORAGE_DIR)} for files waiting to be QCed does not exist.'))
             exit()
         created_list = []
-        ssm_client = AWSClient('ssm', settings.AWS['role_arn']).client
+        configuration = get_config(f"/{getenv('ENV')}/{getenv('APP_CONFIG_PATH')}")
 
-        configuration = {}
-        param_details = ssm_client.get_parameters_by_path(
-            Path=f"/{getenv('ENV')}/{getenv('APP_CONFIG_PATH')}",
-            Recursive=False,
-            WithDecryption=True)
-        for param in param_details.get('Parameters', []):
-            param_path_array = param.get('Name').split("/")
-            section_name = param_path_array[-1]
-            configuration[section_name] = param.get('Value')
         client = ArchivesSpaceClient(
             baseurl=configuration.get('AS_BASEURL'),
             username=configuration.get('AS_USERNAME'),
@@ -45,7 +37,7 @@ class Command(BaseCommand):
             refid = package_path.stem
             if not Package.objects.filter(refid=refid, process_status=Package.PENDING).exists():
                 try:
-                    title, uri, resource_title, resource_uri = client.get_package_data(refid)
+                    title, uri, resource_title, resource_uri, undated_object = client.get_package_data(refid)
                     package_tree = self._get_dir_tree(package_path)
                     possible_duplicate = Package.objects.filter(refid=refid, process_status=Package.APPROVED).exists()
                     Package.objects.create(
@@ -53,6 +45,7 @@ class Command(BaseCommand):
                         uri=uri,
                         resource_title=resource_title,
                         resource_uri=resource_uri,
+                        undated_object=undated_object,
                         possible_duplicate=possible_duplicate,
                         refid=refid,
                         tree=package_tree,
@@ -65,8 +58,9 @@ class Command(BaseCommand):
                     sns_client.deliver_message(
                         settings.AWS['sns_topic'],
                         None,
-                        f'Error discovering refid {refid}\n\n{exception}',
-                        'FAILURE')
+                        f'Error discovering refid {refid}',
+                        'FAILURE',
+                        traceback=exception)
                     continue
 
         message = f'Packages created: {", ".join(created_list)}' if len(created_list) else 'No new packages to discover.'
