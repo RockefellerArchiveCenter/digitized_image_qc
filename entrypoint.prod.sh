@@ -13,6 +13,8 @@ python ./manage.py collectstatic --no-input
 python ./manage.py discover_packages
 # fetch rights statements
 python ./manage.py fetch_rights_statements
+# send startup message
+python ./manage.py send_startup_message
 
 # start cron
 cron
