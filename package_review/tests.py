@@ -14,7 +14,8 @@ from moto.core import DEFAULT_ACCOUNT_ID
 from .clients import ArchivesSpaceClient, AWSClient
 from .helpers import get_config
 from .management.commands import (check_qc_status, discover_packages,
-                                  fetch_rights_statements)
+                                  fetch_rights_statements,
+                                  send_startup_message)
 from .models import Package, RightsStatement
 
 FIXTURE_DIR = "fixtures"
@@ -230,6 +231,21 @@ class CheckQCStatusCommandTests(TestCase):
     def tearDown(self):
         for dir in Path(settings.BASE_STORAGE_DIR).iterdir():
             shutil.rmtree(dir)
+
+
+class CheckStartupMessageCommandTests(TestCase):
+
+    @mock_sns
+    @mock_sts
+    @patch('package_review.clients.AWSClient.deliver_message')
+    @patch('package_review.clients.AWSClient.get_client_with_role')
+    def test_qc_done(self, mock_client, mock_message):
+        send_startup_message.Command().handle()
+        mock_message.assert_called_once_with(
+            settings.AWS['sns_topic'],
+            None,
+            'Packages are waiting to be QCed',
+            'STARTED')
 
 
 class FetchRightsStatementsCommandTests(TestCase):
