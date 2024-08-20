@@ -48,7 +48,7 @@ class ArchivesSpaceClient(ASpace):
             resource = object['resource']['_resolved']
             resource_title = resource['title']
             resource_uri = resource['uri']
-            undated_object = self.has_structured_dates(object['dates'])
+            undated_object = not self.has_structured_dates(object['dates'])
             return object['display_string'], object_uri, resource_title, resource_uri, undated_object
         except KeyError:
             raise Exception(f'Unable to fetch results for {refid}. Got results {results}')
