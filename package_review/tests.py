@@ -292,8 +292,6 @@ class PackageActionViewTests(TestCase):
         create_rights_statements()
         create_packages()
         copy_binaries()
-        if Path(settings.BASE_DESTINATION_DIR).exists():
-            shutil.rmtree(Path(settings.BASE_DESTINATION_DIR))
 
     @patch('package_review.clients.AWSClient.__init__')
     @patch('package_review.clients.AWSClient.deliver_message')
@@ -306,8 +304,7 @@ class PackageActionViewTests(TestCase):
         for package in Package.objects.all():
             self.assertEqual(package.process_status, Package.APPROVED)
             self.assertEqual(package.rights_ids, rights_list)
-        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), 0)
-        self.assertEqual(len(list(Path(settings.BASE_DESTINATION_DIR).iterdir())), Package.objects.all().count())
+        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), Package.objects.all().count())
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('package-list'))
 
@@ -345,10 +342,6 @@ class PackageActionViewTests(TestCase):
         self.assertEqual(package.undated_object, undated_object)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('package-detail', kwargs={'pk': package.pk}))
-
-    def tearDown(self):
-        if Path(settings.BASE_DESTINATION_DIR).exists():
-            shutil.rmtree(Path(settings.BASE_DESTINATION_DIR))
 
 
 class HealthCheckEndpointTests(TestCase):
