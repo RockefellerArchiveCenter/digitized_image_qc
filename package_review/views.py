@@ -74,7 +74,6 @@ class PackageApproveView(PackageActionView):
         rights_ids = request.GET['rights_ids']
         aws_client = AWSClient('sns', settings.AWS['role_arn'])
         for package in queryset:
-            self.move_files(package)
             aws_client.deliver_message(
                 settings.AWS['sns_topic'],
                 package,
@@ -85,15 +84,6 @@ class PackageApproveView(PackageActionView):
             package.rights_ids = rights_ids
             package.save()
         return redirect('package-list')
-
-    def move_files(self, package):
-        """Moves files to packaging directory."""
-        bag_path = Path(settings.BASE_STORAGE_DIR, package.refid)
-        for fp in bag_path.iterdir():
-            new_path = Path(settings.BASE_DESTINATION_DIR, package.refid, fp.name)
-            new_path.parent.mkdir(parents=True, exist_ok=True)
-            fp.rename(new_path)
-        rmtree(bag_path)
 
 
 class PackageRejectView(PackageActionView):
