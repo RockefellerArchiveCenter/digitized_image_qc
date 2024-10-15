@@ -37,16 +37,15 @@ class Command(BaseCommand):
             refid = package_path.stem
             if not Package.objects.filter(refid=refid, process_status=Package.PENDING).exists():
                 try:
-                    title, uri, resource_title, resource_uri, undated_object = client.get_package_data(refid)
+                    title, uri, resource_title, resource_uri, undated_object, already_digitized = client.get_package_data(refid)
                     package_tree = self._get_dir_tree(package_path)
-                    possible_duplicate = Package.objects.filter(refid=refid, process_status=Package.APPROVED).exists()
                     Package.objects.create(
                         title=title,
                         uri=uri,
                         resource_title=resource_title,
                         resource_uri=resource_uri,
                         undated_object=undated_object,
-                        possible_duplicate=possible_duplicate,
+                        already_digitized=already_digitized,
                         refid=refid,
                         tree=package_tree,
                         process_status=Package.PENDING)
