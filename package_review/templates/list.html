@@ -18,7 +18,7 @@ Complete QC and Assign Rights for Digitized Items
                 <th data-sortable-type="string">Title</th>
                 <th>Collection</th>
                 <th>Undated Object?</th>
-                <th>Possible Duplicate?</th>
+                <th>Already Digitized?</th>
             </tr>
         </thead>
         <tbody>
@@ -35,7 +35,7 @@ Complete QC and Assign Rights for Digitized Items
                 <td data-value="{{object.title}}"><a href="{% url 'package-detail' pk=object.pk %}">{{object.title}}</a></td>
                 <td>{{object.resource_title}}</td>
                 <td>{{object.undated_object}}</td>
-                <td>{{object.possible_duplicate}}</td>
+                <td>{{object.already_digitized}}</td>
             </tr>
             {% endfor %}
         </tbody>

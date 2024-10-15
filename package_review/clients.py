@@ -37,7 +37,7 @@ class ArchivesSpaceClient(ASpace):
             refid (string): RefID for an ArchivesSpace archival object.
 
         Returns:
-            object_title, av_number, object_uri, resource_title, resource_uri (tuple of strings): data about the object.
+            object_title, object_uri, resource_title, resource_uri, undated_object, already_digitized (tuple): data about the object.
         """
         results = self.client.get(f"/repositories/{self.repository}/find_by_id/archival_objects?ref_id[]={refid}&resolve[]=archival_objects&resolve[]=archival_objects::resource").json()
         try:
@@ -48,8 +48,9 @@ class ArchivesSpaceClient(ASpace):
             resource = object['resource']['_resolved']
             resource_title = resource['title']
             resource_uri = resource['uri']
+            already_digitized = bool(len([i for i in object['instances'] if i['instance_type'] == 'digital_object']) > 0)
             undated_object = not self.has_structured_dates(object['dates'])
-            return object['display_string'], object_uri, resource_title, resource_uri, undated_object
+            return object['display_string'], object_uri, resource_title, resource_uri, undated_object, already_digitized
         except KeyError:
             raise Exception(f'Unable to fetch results for {refid}. Got results {results}')
 

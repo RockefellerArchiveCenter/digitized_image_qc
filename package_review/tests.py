@@ -171,7 +171,7 @@ class DiscoverPackagesCommandTests(TestCase):
         """Asserts cron produces expected results."""
         expected_len = len(list(Path(settings.BASE_STORAGE_DIR).iterdir()))
         mock_init.return_value = None
-        mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri', False
+        mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri', False, False
 
         discover_packages.Command().handle()
         mock_config.assert_called_once()
@@ -331,7 +331,8 @@ class PackageActionViewTests(TestCase):
         resource_title = "resource title"
         resource_uri = "/repositories/2/resources/1"
         undated_object = True
-        mock_data.return_value = title, object_uri, resource_title, resource_uri, undated_object
+        already_digitized = False
+        mock_data.return_value = title, object_uri, resource_title, resource_uri, undated_object, already_digitized
         package = random.choice(Package.objects.all())
         response = self.client.get(f'{reverse("refresh-data")}?object_list={package.id}')
         package.refresh_from_db()
@@ -340,6 +341,7 @@ class PackageActionViewTests(TestCase):
         self.assertEqual(package.resource_title, resource_title)
         self.assertEqual(package.resource_uri, resource_uri)
         self.assertEqual(package.undated_object, undated_object)
+        self.assertEqual(package.already_digitized, already_digitized)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('package-detail', kwargs={'pk': package.pk}))
 
