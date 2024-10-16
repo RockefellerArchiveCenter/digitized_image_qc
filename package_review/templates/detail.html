@@ -43,8 +43,8 @@
 <p class="text--orange">This package may be associated with an object in ArchivesSpace that does not have structured dates.</p>
 {% endif %}
 
-{% if object.possible_duplicate  %}
-<p class="text--orange">This package may have already been processed through this pipeline.</p>
+{% if object.already_digitized  %}
+<p class="text--orange">A digital object associated with this archival object already exists in ArchivesSpace.</p>
 {% endif %}
 
 <div class="mt-50">

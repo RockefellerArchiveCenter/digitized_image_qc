@@ -74,7 +74,6 @@ class PackageApproveView(PackageActionView):
         rights_ids = request.GET['rights_ids']
         aws_client = AWSClient('sns', settings.AWS['role_arn'])
         for package in queryset:
-            self.move_files(package)
             aws_client.deliver_message(
                 settings.AWS['sns_topic'],
                 package,
@@ -85,15 +84,6 @@ class PackageApproveView(PackageActionView):
             package.rights_ids = rights_ids
             package.save()
         return redirect('package-list')
-
-    def move_files(self, package):
-        """Moves files to packaging directory."""
-        bag_path = Path(settings.BASE_STORAGE_DIR, package.refid)
-        for fp in bag_path.iterdir():
-            new_path = Path(settings.BASE_DESTINATION_DIR, package.refid, fp.name)
-            new_path.parent.mkdir(parents=True, exist_ok=True)
-            fp.rename(new_path)
-        rmtree(bag_path)
 
 
 class PackageRejectView(PackageActionView):
@@ -132,11 +122,12 @@ class PackageDataRefreshView(PackageActionView):
             password=configuration.get('AS_PASSWORD'),
             repository=configuration.get('AS_REPO'))
         for package in queryset:
-            title, uri, resource_title, resource_uri, undated_object = client.get_package_data(package.refid)
+            title, uri, resource_title, resource_uri, undated_object, already_digitized = client.get_package_data(package.refid)
             package.title = title
             package.uri = uri
             package.resource_title = resource_title
             package.resource_uri = resource_uri
             package.undated_object = undated_object
+            package.already_digitized = already_digitized
             package.save()
         return redirect('package-detail', pk=package.pk)

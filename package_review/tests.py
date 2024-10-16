@@ -171,7 +171,7 @@ class DiscoverPackagesCommandTests(TestCase):
         """Asserts cron produces expected results."""
         expected_len = len(list(Path(settings.BASE_STORAGE_DIR).iterdir()))
         mock_init.return_value = None
-        mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri', False
+        mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri', False, False
 
         discover_packages.Command().handle()
         mock_config.assert_called_once()
@@ -292,8 +292,6 @@ class PackageActionViewTests(TestCase):
         create_rights_statements()
         create_packages()
         copy_binaries()
-        if Path(settings.BASE_DESTINATION_DIR).exists():
-            shutil.rmtree(Path(settings.BASE_DESTINATION_DIR))
 
     @patch('package_review.clients.AWSClient.__init__')
     @patch('package_review.clients.AWSClient.deliver_message')
@@ -306,8 +304,7 @@ class PackageActionViewTests(TestCase):
         for package in Package.objects.all():
             self.assertEqual(package.process_status, Package.APPROVED)
             self.assertEqual(package.rights_ids, rights_list)
-        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), 0)
-        self.assertEqual(len(list(Path(settings.BASE_DESTINATION_DIR).iterdir())), Package.objects.all().count())
+        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), Package.objects.all().count())
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('package-list'))
 
@@ -334,7 +331,8 @@ class PackageActionViewTests(TestCase):
         resource_title = "resource title"
         resource_uri = "/repositories/2/resources/1"
         undated_object = True
-        mock_data.return_value = title, object_uri, resource_title, resource_uri, undated_object
+        already_digitized = False
+        mock_data.return_value = title, object_uri, resource_title, resource_uri, undated_object, already_digitized
         package = random.choice(Package.objects.all())
         response = self.client.get(f'{reverse("refresh-data")}?object_list={package.id}')
         package.refresh_from_db()
@@ -343,12 +341,9 @@ class PackageActionViewTests(TestCase):
         self.assertEqual(package.resource_title, resource_title)
         self.assertEqual(package.resource_uri, resource_uri)
         self.assertEqual(package.undated_object, undated_object)
+        self.assertEqual(package.already_digitized, already_digitized)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('package-detail', kwargs={'pk': package.pk}))
-
-    def tearDown(self):
-        if Path(settings.BASE_DESTINATION_DIR).exists():
-            shutil.rmtree(Path(settings.BASE_DESTINATION_DIR))
 
 
 class HealthCheckEndpointTests(TestCase):

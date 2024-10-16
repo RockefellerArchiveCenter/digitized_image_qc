@@ -1,4 +1,4 @@
-FROM python:3.11-bookworm as base
+FROM python:3.11-bookworm AS base
 
 RUN apt-get clean && apt-get update
 RUN apt-get install --yes ffmpeg
@@ -8,7 +8,7 @@ WORKDIR /var/www/digitized-image-qc
 RUN pip install -r requirements.txt
 COPY . /var/www/digitized-image-qc
 
-FROM base as build
+FROM base AS build
 ARG WSGI_VERSION=5.0.0
 
 RUN apt-get install --yes apache2 apache2-dev python3.11-dev cron
