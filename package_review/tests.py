@@ -14,7 +14,7 @@ from moto.core import DEFAULT_ACCOUNT_ID
 from .clients import ArchivesSpaceClient, AWSClient
 from .helpers import get_config
 from .management.commands import (check_qc_status, discover_packages,
-                                  fetch_rights_statements,
+                                  fetch_rights_statements, remove_approved,
                                   send_startup_message)
 from .models import Package, RightsStatement
 
@@ -263,6 +263,18 @@ class FetchRightsStatementsCommandTests(TestCase):
         self.assertEqual(RightsStatement.objects.all().count(), len(rights_statements))
 
 
+class RemoveApprovedCommandTests(TestCase):
+
+    def test_handle(self):
+        """Asserts command deletes only packages with missing binaries"""
+        create_packages()
+        copy_binaries()
+        shutil.rmtree(Path(settings.BASE_STORAGE_DIR, "9ba10e5461d401517b0e1a53d514ec87"))
+        remove_approved.Command().handle()
+        self.assertEqual(Package.objects.all().count(), 1)
+        self.assertEqual(Package.objects.all().first().refid, "f7d3dd6dc9c4732fa17dbd88fbe652b6")
+
+
 class ViewMixinTests(TestCase):
 
     def setUp(self):
@@ -304,7 +316,8 @@ class PackageActionViewTests(TestCase):
         for package in Package.objects.all():
             self.assertEqual(package.process_status, Package.APPROVED)
             self.assertEqual(package.rights_ids, rights_list)
-        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), Package.objects.all().count())
+        self.assertEqual(len(list(Path(settings.BASE_DESTINATION_DIR).iterdir())), Package.objects.all().count())
+        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), 0)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('package-list'))
 
