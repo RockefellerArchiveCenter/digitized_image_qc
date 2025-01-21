@@ -5,6 +5,11 @@
 .coverage
 .tox
 
+### App
+/destination
+/storage
+
+
 ### Django ###
 *.log
 *.pot

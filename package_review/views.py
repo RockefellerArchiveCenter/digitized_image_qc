@@ -1,6 +1,6 @@
 from os import getenv
 from pathlib import Path
-from shutil import rmtree
+from shutil import copytree, rmtree
 
 from django.conf import settings
 from django.shortcuts import redirect
@@ -74,6 +74,7 @@ class PackageApproveView(PackageActionView):
         rights_ids = request.GET['rights_ids']
         aws_client = AWSClient('sns', settings.AWS['role_arn'])
         for package in queryset:
+            self.move_files(package)
             aws_client.deliver_message(
                 settings.AWS['sns_topic'],
                 package,
@@ -84,6 +85,13 @@ class PackageApproveView(PackageActionView):
             package.rights_ids = rights_ids
             package.save()
         return redirect('package-list')
+
+    def move_files(self, package):
+        """Moves files to packaging directory."""
+        bag_dir = Path(settings.BASE_STORAGE_DIR, package.refid)
+        new_path = Path(settings.BASE_DESTINATION_DIR, package.refid)
+        copytree(bag_dir, new_path)
+        rmtree(bag_dir)
 
 
 class PackageRejectView(PackageActionView):
