@@ -297,6 +297,10 @@ class ViewMixinTests(TestCase):
             response = self.client.get(f'{reverse(view_str)}?{form_data}')
             self.assertEqual(Package.objects.all().count(), len(response.context['object_list']))
 
+    def tearDown(self):
+        if Path(settings.BASE_DESTINATION_DIR).exists():
+            shutil.rmtree(Path(settings.BASE_DESTINATION_DIR))
+
 
 class PackageActionViewTests(TestCase):
 
@@ -357,6 +361,17 @@ class PackageActionViewTests(TestCase):
         self.assertEqual(package.already_digitized, already_digitized)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('package-detail', kwargs={'pk': package.pk}))
+
+    def test_update_tree(self):
+        package = random.choice(Package.objects.all())
+        response = self.client.get(f'{reverse("update-tree")}?object_list={package.id}')
+        package.refresh_from_db()
+        self.assertIn(package.refid, package.tree)
+        self.assertEqual(response.url, reverse('package-detail', kwargs={'pk': package.pk}))
+
+    def tearDown(self):
+        if Path(settings.BASE_DESTINATION_DIR).exists():
+            shutil.rmtree(Path(settings.BASE_DESTINATION_DIR))
 
 
 class HealthCheckEndpointTests(TestCase):
