@@ -13,9 +13,9 @@ from moto.core import DEFAULT_ACCOUNT_ID
 
 from .clients import ArchivesSpaceClient, AWSClient
 from .helpers import get_config
-from .management.commands import (check_qc_status, discover_packages,
-                                  fetch_rights_statements, remove_approved,
-                                  send_startup_message)
+from .management.commands import (check_qc_status, deliver_packages,
+                                  discover_packages, fetch_rights_statements,
+                                  remove_approved, send_startup_message)
 from .models import Package, RightsStatement
 
 FIXTURE_DIR = "fixtures"
@@ -266,6 +266,40 @@ class RemoveApprovedCommandTests(TestCase):
         self.assertEqual(Package.objects.all().first().refid, "f7d3dd6dc9c4732fa17dbd88fbe652b6")
 
 
+class DeliverPackagesCommandTests(TestCase):
+
+    def test_deliver(self):
+        """Asserts packages are delivered as expected."""
+        create_packages()
+        copy_binaries()
+        for package in Package.objects.all():
+            package.process_status = Package.APPROVED
+            package.save()
+        deliver_packages.Command().handle()
+        self.assertEqual(len(list(Path(settings.BASE_DESTINATION_DIR).iterdir())), Package.objects.all().count())
+        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), 0)
+
+    def test_is_running(self):
+        """Asserts presence of PID file correctly sets status"""
+        command = deliver_packages.Command()
+
+        command.PID_FILE_PATH.touch()
+        self.assertEqual(command._is_running(), True)
+
+        command.PID_FILE_PATH.unlink()
+        self.assertEqual(command._is_running(), False)
+
+    def test_set_is_running(self):
+        """Asserts PID file is created or removed as expected."""
+        command = deliver_packages.Command()
+
+        command._set_is_running(True)
+        self.assertTrue(command.PID_FILE_PATH.is_file())
+
+        command._set_is_running(False)
+        self.assertFalse(command.PID_FILE_PATH.is_file())
+
+
 class ViewMixinTests(TestCase):
 
     def setUp(self):
@@ -311,8 +345,6 @@ class PackageActionViewTests(TestCase):
         for package in Package.objects.all():
             self.assertEqual(package.process_status, Package.APPROVED)
             self.assertEqual(package.rights_ids, rights_list)
-        self.assertEqual(len(list(Path(settings.BASE_DESTINATION_DIR).iterdir())), Package.objects.all().count())
-        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), 0)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('package-list'))
 
