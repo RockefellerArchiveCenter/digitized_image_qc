@@ -46,6 +46,8 @@ class Command(BaseCommand):
             for package in Package.objects.filter(process_status=Package.APPROVED):
                 try:
                     self.move_files(package)
+                    package.process_status = Package.DELIVERED
+                    package.save()
                     message = f'Package {package.refid} delivered.'
                     self.stdout.write(self.style.SUCCESS(message))
                 except Exception as e:

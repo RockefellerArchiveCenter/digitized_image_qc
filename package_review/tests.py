@@ -278,6 +278,8 @@ class DeliverPackagesCommandTests(TestCase):
         deliver_packages.Command().handle()
         self.assertEqual(len(list(Path(settings.BASE_DESTINATION_DIR).iterdir())), Package.objects.all().count())
         self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), 0)
+        self.assertEqual(Package.objects.filter(process_status=Package.APPROVED).count(), 0)
+        self.assertEqual(Package.objects.filter(process_status=Package.DELIVERED).count(), 2)
 
     def test_is_running(self):
         """Asserts presence of PID file correctly sets status"""
