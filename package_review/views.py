@@ -67,20 +67,11 @@ class PackageActionView(View):
 
 class PackageApproveView(PackageActionView):
     """Approves a list of packages."""
-    message = 'Package reviewed and approved.'
-    outcome = 'SUCCESS'
 
     def post(self, request, *args, **kwargs):
         queryset = self._get_queryset(request)
         rights_ids = request.GET['rights_ids']
-        aws_client = AWSClient('sns', settings.AWS['role_arn'])
         for package in queryset:
-            aws_client.deliver_message(
-                settings.AWS['sns_topic'],
-                package,
-                self.message,
-                self.outcome,
-                rights_ids=rights_ids)
             package.process_status = Package.APPROVED
             package.rights_ids = rights_ids
             package.save()

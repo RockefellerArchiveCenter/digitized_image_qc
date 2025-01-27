@@ -268,18 +268,22 @@ class RemoveApprovedCommandTests(TestCase):
 
 class DeliverPackagesCommandTests(TestCase):
 
-    def test_deliver(self):
+    @patch('package_review.clients.AWSClient.__init__')
+    @patch('package_review.clients.AWSClient.deliver_message')
+    def test_deliver(self, mock_deliver, mock_init):
         """Asserts packages are delivered as expected."""
         create_packages()
         copy_binaries()
         for package in Package.objects.all():
             package.process_status = Package.APPROVED
             package.save()
+        mock_init.return_value = None
         deliver_packages.Command().handle()
         self.assertEqual(len(list(Path(settings.BASE_DESTINATION_DIR).iterdir())), Package.objects.all().count())
         self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), 0)
         self.assertEqual(Package.objects.filter(process_status=Package.APPROVED).count(), 0)
         self.assertEqual(Package.objects.filter(process_status=Package.DELIVERED).count(), 2)
+        self.assertEqual(mock_deliver.call_count, Package.objects.all().count())
 
     def test_is_running(self):
         """Asserts presence of PID file correctly sets status"""
@@ -336,14 +340,10 @@ class PackageActionViewTests(TestCase):
         create_packages()
         copy_binaries()
 
-    @patch('package_review.clients.AWSClient.__init__')
-    @patch('package_review.clients.AWSClient.deliver_message')
-    def test_approve_view(self, mock_deliver, mock_init):
-        mock_init.return_value = None
+    def test_approve_view(self):
         pkg_list = ",".join([str(obj.id) for obj in Package.objects.all()])
         rights_list = ",".join([str(obj.id) for obj in RightsStatement.objects.all()])
         response = self.client.post(f'{reverse("package-approve")}?object_list={pkg_list}&rights_ids={rights_list}')
-        self.assertEqual(mock_deliver.call_count, Package.objects.all().count())
         for package in Package.objects.all():
             self.assertEqual(package.process_status, Package.APPROVED)
             self.assertEqual(package.rights_ids, rights_list)
