@@ -13,9 +13,9 @@ from moto.core import DEFAULT_ACCOUNT_ID
 
 from .clients import ArchivesSpaceClient, AWSClient
 from .helpers import get_config
-from .management.commands import (check_qc_status, discover_packages,
-                                  fetch_rights_statements, remove_approved,
-                                  send_startup_message)
+from .management.commands import (check_qc_status, deliver_packages,
+                                  discover_packages, fetch_rights_statements,
+                                  remove_approved, send_startup_message)
 from .models import Package, RightsStatement
 
 FIXTURE_DIR = "fixtures"
@@ -152,15 +152,6 @@ class DiscoverPackagesCommandTests(TestCase):
     def setUp(self):
         copy_binaries()
 
-    def test_get_tree(self):
-        for refid in ["9ba10e5461d401517b0e1a53d514ec87", "f7d3dd6dc9c4732fa17dbd88fbe652b6"]:
-            tree = discover_packages.Command()._get_dir_tree(Path("package_review", FIXTURE_DIR, "packages", refid))
-            self.assertIsInstance(tree, str)
-            self.assertIn(refid, tree)
-            self.assertIn('master', tree)
-            self.assertIn('master_edited', tree)
-            self.assertIn('service_edited', tree)
-
     @mock_sts
     @patch('package_review.clients.ArchivesSpaceClient.__init__')
     @patch('package_review.clients.ArchivesSpaceClient.get_package_data')
@@ -275,6 +266,42 @@ class RemoveApprovedCommandTests(TestCase):
         self.assertEqual(Package.objects.all().first().refid, "f7d3dd6dc9c4732fa17dbd88fbe652b6")
 
 
+class DeliverPackagesCommandTests(TestCase):
+
+    def test_deliver(self):
+        """Asserts packages are delivered as expected."""
+        create_packages()
+        copy_binaries()
+        for package in Package.objects.all():
+            package.process_status = Package.APPROVED
+            package.save()
+        deliver_packages.Command().handle()
+        self.assertEqual(len(list(Path(settings.BASE_DESTINATION_DIR).iterdir())), Package.objects.all().count())
+        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), 0)
+        self.assertEqual(Package.objects.filter(process_status=Package.APPROVED).count(), 0)
+        self.assertEqual(Package.objects.filter(process_status=Package.DELIVERED).count(), 2)
+
+    def test_is_running(self):
+        """Asserts presence of PID file correctly sets status"""
+        command = deliver_packages.Command()
+
+        command.PID_FILE_PATH.touch()
+        self.assertEqual(command._is_running(), True)
+
+        command.PID_FILE_PATH.unlink()
+        self.assertEqual(command._is_running(), False)
+
+    def test_set_is_running(self):
+        """Asserts PID file is created or removed as expected."""
+        command = deliver_packages.Command()
+
+        command._set_is_running(True)
+        self.assertTrue(command.PID_FILE_PATH.is_file())
+
+        command._set_is_running(False)
+        self.assertFalse(command.PID_FILE_PATH.is_file())
+
+
 class ViewMixinTests(TestCase):
 
     def setUp(self):
@@ -320,8 +347,6 @@ class PackageActionViewTests(TestCase):
         for package in Package.objects.all():
             self.assertEqual(package.process_status, Package.APPROVED)
             self.assertEqual(package.rights_ids, rights_list)
-        self.assertEqual(len(list(Path(settings.BASE_DESTINATION_DIR).iterdir())), Package.objects.all().count())
-        self.assertEqual(len(list(Path(settings.BASE_STORAGE_DIR).iterdir())), 0)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('package-list'))
 
@@ -367,6 +392,9 @@ class PackageActionViewTests(TestCase):
         response = self.client.get(f'{reverse("update-tree")}?object_list={package.id}')
         package.refresh_from_db()
         self.assertIn(package.refid, package.tree)
+        self.assertIn('master', package.tree)
+        self.assertIn('master_edited', package.tree)
+        self.assertIn('service_edited', package.tree)
         self.assertEqual(response.url, reverse('package-detail', kwargs={'pk': package.pk}))
 
     def tearDown(self):

@@ -2,7 +2,6 @@ import logging
 import traceback
 from os import getenv
 
-from directory_tree import display_tree
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
@@ -17,9 +16,6 @@ logging.basicConfig(
 
 class Command(BaseCommand):
     help = "Discovers new packages to be QCed."
-
-    def _get_dir_tree(self, root_path):
-        return display_tree(root_path, string_rep=True, show_hidden=True)
 
     def handle(self, *args, **options):
         if not settings.BASE_STORAGE_DIR.is_dir():
@@ -38,7 +34,6 @@ class Command(BaseCommand):
             if not Package.objects.filter(refid=refid, process_status=Package.PENDING).exists():
                 try:
                     title, uri, resource_title, resource_uri, undated_object, already_digitized = client.get_package_data(refid)
-                    package_tree = self._get_dir_tree(package_path)
                     Package.objects.create(
                         title=title,
                         uri=uri,
@@ -47,7 +42,6 @@ class Command(BaseCommand):
                         undated_object=undated_object,
                         already_digitized=already_digitized,
                         refid=refid,
-                        tree=package_tree,
                         process_status=Package.PENDING)
                     created_list.append(refid)
                 except Exception as e:
