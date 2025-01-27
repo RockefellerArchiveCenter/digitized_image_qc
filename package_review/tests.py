@@ -152,15 +152,6 @@ class DiscoverPackagesCommandTests(TestCase):
     def setUp(self):
         copy_binaries()
 
-    def test_get_tree(self):
-        for refid in ["9ba10e5461d401517b0e1a53d514ec87", "f7d3dd6dc9c4732fa17dbd88fbe652b6"]:
-            tree = discover_packages.Command()._get_dir_tree(Path("package_review", FIXTURE_DIR, "packages", refid))
-            self.assertIsInstance(tree, str)
-            self.assertIn(refid, tree)
-            self.assertIn('master', tree)
-            self.assertIn('master_edited', tree)
-            self.assertIn('service_edited', tree)
-
     @mock_sts
     @patch('package_review.clients.ArchivesSpaceClient.__init__')
     @patch('package_review.clients.ArchivesSpaceClient.get_package_data')
@@ -367,6 +358,9 @@ class PackageActionViewTests(TestCase):
         response = self.client.get(f'{reverse("update-tree")}?object_list={package.id}')
         package.refresh_from_db()
         self.assertIn(package.refid, package.tree)
+        self.assertIn('master', package.tree)
+        self.assertIn('master_edited', package.tree)
+        self.assertIn('service_edited', package.tree)
         self.assertEqual(response.url, reverse('package-detail', kwargs={'pk': package.pk}))
 
     def tearDown(self):
