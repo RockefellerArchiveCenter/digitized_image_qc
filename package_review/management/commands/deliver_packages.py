@@ -6,6 +6,7 @@ from shutil import copytree, rmtree
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
+from package_review.clients import AWSClient
 from package_review.models import Package
 
 logging.basicConfig(
@@ -42,12 +43,19 @@ class Command(BaseCommand):
             exit()
         if not self._is_running():
             self._set_is_running(True)
+            aws_client = AWSClient('sns', settings.AWS['role_arn'])
 
             for package in Package.objects.filter(process_status=Package.APPROVED):
                 try:
                     self.move_files(package)
                     package.process_status = Package.DELIVERED
                     package.save()
+                    aws_client.deliver_message(
+                        settings.AWS['sns_topic'],
+                        package,
+                        'Package reviewed and approved.',
+                        'SUCCESS',
+                        rights_ids=package.rights_ids)
                     message = f'Package {package.refid} delivered.'
                     self.stdout.write(self.style.SUCCESS(message))
                 except Exception as e:
