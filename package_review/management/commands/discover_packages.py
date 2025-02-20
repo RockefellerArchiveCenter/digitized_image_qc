@@ -31,7 +31,7 @@ class Command(BaseCommand):
             repository=configuration.get('AS_REPO'))
         for package_path in settings.BASE_STORAGE_DIR.iterdir():
             refid = package_path.stem
-            if not Package.objects.filter(refid=refid, process_status=Package.PENDING).exists():
+            if not Package.objects.filter(refid=refid, process_status__in=[Package.PENDING, Package.APPROVED]).exists():
                 try:
                     title, uri, resource_title, resource_uri, undated_object, already_digitized = client.get_package_data(refid)
                     Package.objects.create(
