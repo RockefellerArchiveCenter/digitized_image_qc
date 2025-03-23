@@ -19,7 +19,7 @@ from django.conf.urls.static import static
 from django.urls import re_path
 
 from package_review.views import (PackageApproveView, PackageBulkApproveView,
-                                  PackageBulkRejectView,
+                                  PackageBulkRejectView, PackageCSVListView,
                                   PackageDataRefreshView, PackageDetailView,
                                   PackageListView, PackageRejectView,
                                   PackageTreeUpdateView)
@@ -27,11 +27,12 @@ from package_review.views import (PackageApproveView, PackageBulkApproveView,
 urlpatterns = [
     # path("admin/", admin.site.urls),
     re_path(r'^$', PackageListView.as_view(), name='package-list'),
-    re_path(r'^package/(?P<pk>[\d]+)/$', PackageDetailView.as_view(), name='package-detail'),
-    re_path(r'^package/bulk-approve/$', PackageBulkApproveView.as_view(), name='package-bulk-approve'),
-    re_path(r'^package/bulk-reject/$', PackageBulkRejectView.as_view(), name='package-bulk-reject'),
-    re_path(r'^package/approve/', PackageApproveView.as_view(), name='package-approve'),
-    re_path(r'^package/reject/', PackageRejectView.as_view(), name='package-reject'),
-    re_path(r'^package/refresh-data/', PackageDataRefreshView.as_view(), name='refresh-data'),
-    re_path(r'^package/update-tree/', PackageTreeUpdateView.as_view(), name='update-tree'),
+    re_path(r'^packages/(?P<pk>[\d]+)/$', PackageDetailView.as_view(), name='package-detail'),
+    re_path(r'^packages/bulk-approve/$', PackageBulkApproveView.as_view(), name='package-bulk-approve'),
+    re_path(r'^packages/bulk-reject/$', PackageBulkRejectView.as_view(), name='package-bulk-reject'),
+    re_path(r'^packages/approve/', PackageApproveView.as_view(), name='package-approve'),
+    re_path(r'^packages/reject/', PackageRejectView.as_view(), name='package-reject'),
+    re_path(r'^packages/refresh-data/', PackageDataRefreshView.as_view(), name='refresh-data'),
+    re_path(r'^packages/update-tree/', PackageTreeUpdateView.as_view(), name='update-tree'),
+    re_path(r'^packages/csv/$', PackageCSVListView.as_view(), name='package-list-csv'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
