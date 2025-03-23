@@ -1,3 +1,9 @@
+.package-list__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
 .table thead th:nth-child(1) {
     width: 10%;
 }
