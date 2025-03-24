@@ -7,9 +7,12 @@ Complete QC and Assign Rights for Digitized Items
 {% block content %}
 {% if object_list|length %}
 
-<p class="mb-20">
-    {{object_list|length}} {% if object_list|length == 1 %}package{% else %}packages{% endif %} pending approval
-</p>
+<div class="package-list__actions">
+    <p class="mb-20">
+        {{object_list|length}} {% if object_list|length == 1 %}package{% else %}packages{% endif %} pending approval
+    </p>
+    <a href="{% url 'package-list-csv' %}" class="btn btn--sm btn--blue" aria-label="Download pending packages data as CSV">Download CSV</a>
+</div>
 
 <button id="select-toggle" class="btn btn--sm btn--gray" aria-label="Select all items" aria-pressed="false">Select all items</button>
 <form id="package-list-table" action="{% url 'package-bulk-approve' %}" method="get">
