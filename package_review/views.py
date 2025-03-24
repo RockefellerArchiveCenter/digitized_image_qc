@@ -1,9 +1,12 @@
+import csv
+from datetime import datetime
 from os import getenv
 from pathlib import Path
 from shutil import rmtree
 
 from directory_tree import display_tree
 from django.conf import settings
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, TemplateView, View
 
@@ -27,6 +30,23 @@ class PackageListView(ListView):
     template_name = 'list.html'
     model = Package
     queryset = Package.objects.filter(process_status=Package.PENDING)
+
+
+class PackageCSVListView(View):
+    """Returns CSV-formatted data from pending packages."""
+    model = Package
+
+    def get(self, request, *args, **kwargs):
+        data = [["Ref ID", "Title", "Resource Title"]]
+        packages = Package.objects.filter(process_status=Package.PENDING)
+        for package in packages:
+            data.append([package.refid, package.title, package.resource_title])
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="{0}"'.format("packages-{}.csv".format(datetime.now()))
+        writer = csv.writer(response)
+        for row in data:
+            writer.writerow(row)
+        return response
 
 
 class PackageDetailView(RightsStatementMixin, DetailView):

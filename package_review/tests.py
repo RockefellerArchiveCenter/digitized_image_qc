@@ -402,6 +402,21 @@ class PackageActionViewTests(TestCase):
             shutil.rmtree(Path(settings.BASE_DESTINATION_DIR))
 
 
+class PackageCsvViewTests(TestCase):
+
+    def setUp(self):
+        create_packages()
+
+    def test_csv_view(self):
+        """Assert response returns correct headers and content."""
+        response = self.client.get(reverse("package-list-csv"))
+        self.assertEqual(response.headers['Content-Type'], 'text/csv')
+        self.assertTrue(response.headers['Content-Disposition'].startswith('attachment; filename="packages-'))
+        content = response.content.decode('utf-8').split('\r\n')
+        self.assertEqual(len(content), Package.objects.filter(process_status=Package.PENDING).count() + 2)
+        self.assertEqual(content[0], 'Ref ID,Title,Resource Title')
+
+
 class HealthCheckEndpointTests(TestCase):
 
     def test_endpoint_response(self):
