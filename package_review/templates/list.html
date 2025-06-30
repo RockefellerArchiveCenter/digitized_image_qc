@@ -24,7 +24,9 @@ Complete QC and Assign Rights for Digitized Items
                 <tr>
                     <th>Select</th>
                     <th data-sortable-type="alpha">Title</th>
+                    <th>Ref ID</th>
                     <th>Collection</th>
+                    <th>Created</th>
                     <th>Undated Object?</th>
                     <th>Already Digitized?</th>
                 </tr>
@@ -41,7 +43,9 @@ Complete QC and Assign Rights for Digitized Items
                         />
                     </td>
                     <td data-value="{{object.title}}"><a href="{% url 'package-detail' pk=object.pk %}">{{object.title}}</a></td>
+                    <td>{{object.refid}}</td>
                     <td>{{object.resource_title}}</td>
+                    <td>{{object.created_at}}</td>
                     <td>{{object.undated_object}}</td>
                     <td>{{object.already_digitized}}</td>
                 </tr>
