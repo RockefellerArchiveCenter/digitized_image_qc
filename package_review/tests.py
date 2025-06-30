@@ -414,7 +414,7 @@ class PackageCsvViewTests(TestCase):
         self.assertTrue(response.headers['Content-Disposition'].startswith('attachment; filename="packages-'))
         content = response.content.decode('utf-8').split('\r\n')
         self.assertEqual(len(content), Package.objects.filter(process_status=Package.PENDING).count() + 2)
-        self.assertEqual(content[0], 'Ref ID,Title,Resource Title')
+        self.assertEqual(content[0], 'Ref ID,Title,Resource Title,Created')
 
 
 class HealthCheckEndpointTests(TestCase):
