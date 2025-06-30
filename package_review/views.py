@@ -37,10 +37,10 @@ class PackageCSVListView(View):
     model = Package
 
     def get(self, request, *args, **kwargs):
-        data = [["Ref ID", "Title", "Resource Title"]]
+        data = [["Ref ID", "Title", "Resource Title", "Created"]]
         packages = Package.objects.filter(process_status=Package.PENDING)
         for package in packages:
-            data.append([package.refid, package.title, package.resource_title])
+            data.append([package.refid, package.title, package.resource_title, package.created_at])
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="{0}"'.format("packages-{}.csv".format(datetime.now()))
         writer = csv.writer(response)
