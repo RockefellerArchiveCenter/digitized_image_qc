@@ -1,4 +1,4 @@
-FROM python:3.11-bookworm AS base
+FROM python:3.12-bookworm AS base
 
 RUN apt-get clean && apt-get update
 RUN apt-get install --yes ffmpeg
