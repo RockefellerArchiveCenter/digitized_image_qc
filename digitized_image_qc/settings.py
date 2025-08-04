@@ -133,17 +133,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
-BASE_STORAGE_DIR = BASE_DIR / getenv('STORAGE_PATH')
-BASE_DESTINATION_DIR = BASE_DIR / getenv('DESTINATION_PATH')
-
-MEDIA_ROOT = BASE_STORAGE_DIR
-MEDIA_URL = '/media/'
-
 AQUILA = {
     'baseurl': getenv('AQUILA_BASEURL')
 }
 
 AWS = {
     'role_arn': getenv('AWS_ROLE_ARN'),
-    'sns_topic': getenv('AWS_SNS_TOPIC')
+    'sns_topic': getenv('AWS_SNS_TOPIC'),
+    'bucket': getenv('AWS_S3_BUCKET'),
 }
