@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block content %}
-<a class="btn btn--lg btn--blue mb-20" href="{{MEDIA_URL}}{{object.refid}}/service_edited/{{object.refid}}.pdf" download>Download PDF</a>
+<a class="btn btn--lg btn--blue mb-20" href="{{pdf_url}}" download>Download PDF</a>
 
 <object 
   class="pdf__viewer" 
-  data="{{MEDIA_URL}}{{object.refid}}/service_edited/{{object.refid}}.pdf"
+  data="{{pdf_url}}"
   type="application/pdf">
 </object>
 

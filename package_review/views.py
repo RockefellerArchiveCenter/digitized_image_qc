@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, TemplateView, View
+from storages.backends.s3boto3 import S3Boto3Storage
 
 from .clients import ArchivesSpaceClient, AWSClient
 from .helpers import get_config
@@ -50,6 +51,13 @@ class PackageDetailView(RightsStatementMixin, DetailView):
     """Detail view for individual packages."""
     template_name = 'detail.html'
     model = Package
+
+    def get_context_data(self, **kwargs):
+        """Adds PDF URL to context."""
+        context = super().get_context_data(**kwargs)
+        s3_storage = S3Boto3Storage()
+        context['pdf_url'] = s3_storage.url(f'{self.object.refid}/service_edited/{self.object.refid}.pdf')
+        return context
 
 
 class BulkActionListView(View):
