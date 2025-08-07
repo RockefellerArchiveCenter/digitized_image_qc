@@ -9,10 +9,6 @@ declare -p | grep -Ev 'BASHOPTS|BASH_VERSINFO|EUID|PPID|SHELLOPTS|UID' > /contai
 python ./manage.py migrate
 # collect static assets
 python ./manage.py collectstatic --no-input
-# remove approved
-python ./manage.py remove_approved
-# discover packages
-python ./manage.py discover_packages
 # fetch rights statements
 python ./manage.py fetch_rights_statements
 # send startup message
