@@ -29,14 +29,14 @@ services:
       - SQL_DB_PASSWORD=postgres # Password for database user
       - SQL_HOST=db # Hostname for database
       - SQL_PORT=5432 # Port for database
-      - STORAGE_PATH=storage # Path to original location of files, relative to BASE_DIR
-      - DESTINATION_PATH=destination # Path to destination location of files, relative to BASE_DIR
       - AQUILA_BASEURL=http://aquila.dev.rockarch.org # BaseURL for Aquila instance
       - AWS_ACCESS_KEY_ID=foo # Access Key ID for AWS user
       - AWS_SECRET_ACCESS_KEY=bar # Secret Access Key for AWS user
+      - AWS_STORAGE_BUCKET_NAME=rac-dev-image-qc # Bucket name for AWS storage
       - AWS_ROLE_ARN=arn:aws:iam::123456789012:role/digitized-image-role # Role ARN for role to be assumed by AWS user
       - AWS_REGION=us-east-1 # AWS region in which infrastructure is located (string)
       - AWS_SNS_TOPIC=arn:aws:sns:us-east-1:123456789012:digitized-image-events # ARN for SNS Topic to be posted to (string)
+      - AWS_S3_BUCKET=rac-dev-digital-image-qc # Name of S3 bucket used as storage for packages
     volumes:
       - .:/var/www/digitized-image-qc
     ports:

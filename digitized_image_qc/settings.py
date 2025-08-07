@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "package_review",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,23 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = "static/"
 
+
+# Media files
+
+# AWS Storage
+AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = getenv("AWS_REGION")
+
+# Default File Storage for Media Files
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Media URL and Root
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/'
+MEDIA_ROOT = '/'  # This is a logical path within your S3 bucket
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -133,17 +151,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
-BASE_STORAGE_DIR = BASE_DIR / getenv('STORAGE_PATH')
-BASE_DESTINATION_DIR = BASE_DIR / getenv('DESTINATION_PATH')
-
-MEDIA_ROOT = BASE_STORAGE_DIR
-MEDIA_URL = '/media/'
-
 AQUILA = {
     'baseurl': getenv('AQUILA_BASEURL')
 }
 
 AWS = {
     'role_arn': getenv('AWS_ROLE_ARN'),
-    'sns_topic': getenv('AWS_SNS_TOPIC')
+    'sns_topic': getenv('AWS_SNS_TOPIC'),
+    'bucket': getenv('AWS_S3_BUCKET'),
 }
