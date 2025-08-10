@@ -187,6 +187,6 @@ class PackageTreeUpdateView(PackageActionView):
                 if 'Contents' in page:
                     for obj in page['Contents']:
                         objects.append(obj['Key'])
-                package.tree = sorted(objects)
+                package.tree = "\n".join([obj for obj in sorted(objects)])
             package.save()
         return redirect('package-detail', pk=package.pk)
