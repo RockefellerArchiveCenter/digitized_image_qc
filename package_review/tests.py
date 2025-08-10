@@ -349,13 +349,7 @@ class PackageActionViewTests(TestCase):
         package.refresh_from_db()
         self.assertEqual(
             package.tree,
-            [
-                '9ba10e5461d401517b0e1a53d514ec87/master/9ba10e5461d401517b0e1a53d514ec87_0001.tif',
-                '9ba10e5461d401517b0e1a53d514ec87/master/9ba10e5461d401517b0e1a53d514ec87_002.tif',
-                '9ba10e5461d401517b0e1a53d514ec87/master_edited/9ba10e5461d401517b0e1a53d514ec87_0001.tif',
-                '9ba10e5461d401517b0e1a53d514ec87/master_edited/9ba10e5461d401517b0e1a53d514ec87_002.tif',
-                '9ba10e5461d401517b0e1a53d514ec87/service_edited/9ba10e5461d401517b0e1a53d514ec87.pdf'
-            ]
+            "9ba10e5461d401517b0e1a53d514ec87/master/9ba10e5461d401517b0e1a53d514ec87_0001.tif\n9ba10e5461d401517b0e1a53d514ec87/master/9ba10e5461d401517b0e1a53d514ec87_002.tif\n9ba10e5461d401517b0e1a53d514ec87/master_edited/9ba10e5461d401517b0e1a53d514ec87_0001.tif\n9ba10e5461d401517b0e1a53d514ec87/master_edited/9ba10e5461d401517b0e1a53d514ec87_002.tif\n9ba10e5461d401517b0e1a53d514ec87/service_edited/9ba10e5461d401517b0e1a53d514ec87.pdf"
         )
 
         self.assertEqual(response.url, reverse('package-detail', kwargs={'pk': package.pk}))
