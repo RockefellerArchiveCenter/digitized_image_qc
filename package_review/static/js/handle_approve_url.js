@@ -13,8 +13,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('approve_form').action = formUrl
     }
 
+    function updateList() {
+        const checked = Array.prototype.slice.call(checkboxes).filter(x => x.checked).map(x => `<li>${x.name}</li>`)
+        document.getElementById('rights_statements').innerHTML = `<ul>${checked.join('')}</ul>`
+    }
+
     checkboxes.forEach(function(el) {
             el.addEventListener('click', updateUrl)
+            el.addEventListener('click', updateList)
         }
     )
 
