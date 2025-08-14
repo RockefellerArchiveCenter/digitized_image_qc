@@ -10,7 +10,8 @@
         </button>
       </div>
       <div class="modal__body">
-        <p>Are you sure you want to approve these items and their associated rights statements?</p>
+        <p>Are you sure you want to approve these items and these associated rights statements?</p>
+        <div id="rights_statements"></div>
         <form id="approve_form" action="{% url 'package-approve' %}?object_list={{object_list|id_list}}" method="post">
           {% csrf_token %}
           <button type="submit" class="btn btn--sm btn--blue">Approve</button>
