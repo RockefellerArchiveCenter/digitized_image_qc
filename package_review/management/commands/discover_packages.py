@@ -17,11 +17,10 @@ logging.basicConfig(
 class Command(BaseCommand):
     help = "Discovers new packages to be QCed."
 
+    def add_arguments(self, parser):
+        parser.add_argument("refid")
+
     def handle(self, *args, **options):
-        if not settings.BASE_STORAGE_DIR.is_dir():
-            self.stdout.write(self.style.ERROR(f'Root directory {str(settings.BASE_STORAGE_DIR)} for files waiting to be QCed does not exist.'))
-            exit()
-        created_list = []
         configuration = get_config(f"/{getenv('ENV')}/{getenv('APP_CONFIG_PATH')}")
 
         client = ArchivesSpaceClient(
@@ -29,32 +28,30 @@ class Command(BaseCommand):
             username=configuration.get('AS_USERNAME'),
             password=configuration.get('AS_PASSWORD'),
             repository=configuration.get('AS_REPO'))
-        for package_path in settings.BASE_STORAGE_DIR.iterdir():
-            refid = package_path.stem
-            if not Package.objects.filter(refid=refid, process_status__in=[Package.PENDING, Package.APPROVED]).exists():
-                try:
-                    title, uri, resource_title, resource_uri, undated_object, already_digitized = client.get_package_data(refid)
-                    Package.objects.create(
-                        title=title,
-                        uri=uri,
-                        resource_title=resource_title,
-                        resource_uri=resource_uri,
-                        undated_object=undated_object,
-                        already_digitized=already_digitized,
-                        refid=refid,
-                        process_status=Package.PENDING)
-                    created_list.append(refid)
-                except Exception as e:
-                    logging.exception(e)
-                    exception = "\n".join(traceback.format_exception(e))
-                    sns_client = AWSClient('sns', settings.AWS['role_arn'])
-                    sns_client.deliver_message(
-                        settings.AWS['sns_topic'],
-                        None,
-                        f'Error discovering refid {refid}',
-                        'FAILURE',
-                        traceback=exception)
-                    continue
 
-        message = f'Packages created: {", ".join(created_list)}' if len(created_list) else 'No new packages to discover.'
-        self.stdout.write(self.style.SUCCESS(message))
+        refid = options['refid']
+        try:
+            title, uri, resource_title, resource_uri, undated_object, already_digitized = client.get_package_data(refid)
+            Package.objects.create(
+                title=title,
+                uri=uri,
+                resource_title=resource_title,
+                resource_uri=resource_uri,
+                undated_object=undated_object,
+                already_digitized=already_digitized,
+                refid=refid,
+                process_status=Package.PENDING)
+            message = f'Package created: {refid}'
+            self.stdout.write(self.style.SUCCESS(message))
+        except Exception as e:
+            logging.exception(e)
+            exception = "\n".join(traceback.format_exception(e))
+            sns_client = AWSClient('sns', settings.AWS['role_arn'])
+            sns_client.deliver_message(
+                settings.AWS['sns_topic'],
+                None,
+                f'Error discovering refid {refid}',
+                'FAILURE',
+                traceback=exception)
+            message = f'Error creating packages: {e}'
+            self.stdout.write(self.style.ERROR(message))

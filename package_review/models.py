@@ -6,12 +6,10 @@ class Package(models.Model):
     PENDING = 0
     APPROVED = 9
     REJECTED = 5
-    DELIVERED = 10
     PROCESS_STATUS_CHOICES = (
         (PENDING, 'Pending'),
         (APPROVED, 'Approved'),
-        (REJECTED, 'Rejected'),
-        (DELIVERED, 'Delivered'))
+        (REJECTED, 'Rejected'))
 
     title = models.CharField(max_length=255)
     uri = models.CharField(max_length=255)

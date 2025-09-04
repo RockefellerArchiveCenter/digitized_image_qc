@@ -1,3 +1,5 @@
+from os import getenv
+
 import boto3
 from asnake.aspace import ASpace
 from aws_assume_role_lib import assume_role
@@ -79,7 +81,7 @@ class AWSClient(object):
     def get_client_with_role(self, resource, role_arn):
         """Gets Boto3 client which authenticates with a specific IAM role."""
         session = boto3.Session()
-        assumed_role_session = assume_role(session, role_arn)
+        assumed_role_session = assume_role(session, role_arn, region_name=getenv('AWS_REGION', 'us-east-1'))
         return assumed_role_session.client(resource)
 
     def deliver_message(self, sns_topic, package, message, outcome, traceback=None, rights_ids=None):
