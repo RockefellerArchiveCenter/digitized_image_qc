@@ -29,9 +29,12 @@ class Command(BaseCommand):
             password=configuration.get('AS_PASSWORD'),
             repository=configuration.get('AS_REPO'))
 
+        s3_client = AWSClient('s3', settings.AWS['role_arn'])
+
         refid = options['refid']
         try:
             title, uri, resource_title, resource_uri, undated_object, already_digitized = client.get_package_data(refid)
+            size = s3_client.calculate_package_size(refid)
             Package.objects.create(
                 title=title,
                 uri=uri,
@@ -40,6 +43,7 @@ class Command(BaseCommand):
                 undated_object=undated_object,
                 already_digitized=already_digitized,
                 refid=refid,
+                size_bytes=size,
                 process_status=Package.PENDING)
             message = f'Package created: {refid}'
             self.stdout.write(self.style.SUCCESS(message))
