@@ -106,7 +106,8 @@ class PackageApproveView(PackageActionView):
                 package,
                 'Package reviewed and approved.',
                 'SUCCESS',
-                rights_ids=package.rights_ids)
+                rights_ids=package.rights_ids,
+                size=package.size_bytes)
         return redirect('package-list')
 
 
