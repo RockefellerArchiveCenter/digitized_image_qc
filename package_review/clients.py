@@ -126,8 +126,8 @@ class AWSClient(object):
             }
         if size:
             attributes['size'] = {
-                'DataType': 'String',
-                'StringValue': size,
+                'DataType': 'Number',
+                'NumberVale': size,
             }
         self.client.publish(
             TopicArn=sns_topic,
