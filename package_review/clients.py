@@ -126,7 +126,7 @@ class AWSClient(object):
             }
         if size:
             attributes['size'] = {
-                'String': 'Number',
+                'DataType': 'String',
                 'StringValue': str(size),
             }
         self.client.publish(
