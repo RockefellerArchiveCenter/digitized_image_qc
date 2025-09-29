@@ -3,6 +3,7 @@ from os import getenv
 import boto3
 from asnake.aspace import ASpace
 from aws_assume_role_lib import assume_role
+from django.conf import settings
 from requests import Session
 
 
@@ -84,7 +85,19 @@ class AWSClient(object):
         assumed_role_session = assume_role(session, role_arn, region_name=getenv('AWS_REGION', 'us-east-1'))
         return assumed_role_session.client(resource)
 
-    def deliver_message(self, sns_topic, package, message, outcome, traceback=None, rights_ids=None):
+    def calculate_package_size(self, package_id):
+        """Calculates total size of a package."""
+        package_size = 0
+        paginator = self.client.get_paginator('list_objects_v2')
+        pages = paginator.paginate(Bucket=settings.AWS['bucket'], Prefix=package_id)
+
+        for page in pages:
+            for obj in page.get('Contents', []):
+                package_size += obj['Size']
+
+        return package_size
+
+    def deliver_message(self, sns_topic, package, message, outcome, traceback=None, rights_ids=None, size=None):
         """Delivers message to SNS Topic."""
         attributes = {
             'service': {
@@ -108,6 +121,11 @@ class AWSClient(object):
             }
         if rights_ids:
             attributes['rights_ids'] = {
+                'DataType': 'String',
+                'StringValue': rights_ids,
+            }
+        if size:
+            attributes['size'] = {
                 'DataType': 'String',
                 'StringValue': rights_ids,
             }
