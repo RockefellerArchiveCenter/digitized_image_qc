@@ -201,11 +201,15 @@ class DiscoverPackagesCommandTests(TestCase):
 
 class CheckQCStatusCommandTests(TestCase):
 
+    def setUp(self):
+        create_packages()
+
     @mock_aws
     @patch('package_review.clients.AWSClient.deliver_message')
     def test_qc_done(self, mock_message):
-        s3 = boto3.client('s3', region_name='us-east-1')
-        s3.create_bucket(Bucket=settings.AWS['bucket'])
+        for p in Package.objects.all():
+            p.process_status = Package.APPROVED
+            p.save()
         check_qc_status.Command().handle()
         mock_message.assert_called_once_with(
             settings.AWS['sns_topic'],
@@ -216,12 +220,6 @@ class CheckQCStatusCommandTests(TestCase):
     @mock_aws
     @patch('package_review.clients.AWSClient.deliver_message')
     def test_no_message(self, mock_message):
-        s3 = boto3.client('s3', region_name='us-east-1')
-        s3.create_bucket(Bucket=settings.AWS['bucket'])
-        s3.put_object(
-            Bucket=settings.AWS['bucket'],
-            Key='file.txt',
-            Body='')
         check_qc_status.Command().handle()
         mock_message.assert_not_called()
 
