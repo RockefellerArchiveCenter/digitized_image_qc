@@ -19,6 +19,7 @@ class Package(models.Model):
     already_digitized = models.BooleanField(default=False)
     refid = models.CharField(max_length=32)
     tree = models.JSONField(null=True, blank=True)
+    size_bytes = models.PositiveBigIntegerField(blank=True, null=True)
     process_status = models.IntegerField(choices=PROCESS_STATUS_CHOICES)
     rights_ids = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)

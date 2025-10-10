@@ -145,6 +145,25 @@ class AWSClientTests(TestCase):
         self.assertEqual(message_body['MessageAttributes']['refid']['Value'], package.refid)
         self.assertEqual(message_body['MessageAttributes']['rights_ids']['Value'], "1,2")
 
+    @mock_aws
+    @patch('package_review.clients.AWSClient.get_client_with_role')
+    def test_calculate_package_size(self, mock_client):
+        s3 = boto3.client('s3', region_name='us-east-1')
+        mock_client.return_value = s3
+        s3.create_bucket(Bucket=settings.AWS['bucket'])
+        file_content = "Garbage content for test file!"  # 30 bytes
+        package_id = "123456789"
+        for x in range(5):
+            s3.put_object(
+                Bucket=settings.AWS['bucket'],
+                Key=f'{package_id}/{x}/file.txt',
+                Body=file_content)
+
+        client = AWSClient('s3', settings.AWS['role_arn'])
+
+        size = client.calculate_package_size(package_id)
+        self.assertEqual(size, 150)
+
 
 class DiscoverPackagesCommandTests(TestCase):
 
@@ -162,7 +181,7 @@ class DiscoverPackagesCommandTests(TestCase):
         discover_packages.Command().handle(refid="123456789")
         mock_config.assert_called_once()
         mock_init.assert_called_once()
-        mock_client.assert_not_called()
+        mock_client.assert_called_once_with('s3', 'arn:aws:iam::123456789012:role/digitized-image-role')
         mock_message.assert_not_called()
         mock_package_data.assert_called_once()
         self.assertEqual(Package.objects.all().count(), 1)
@@ -182,11 +201,15 @@ class DiscoverPackagesCommandTests(TestCase):
 
 class CheckQCStatusCommandTests(TestCase):
 
+    def setUp(self):
+        create_packages()
+
     @mock_aws
     @patch('package_review.clients.AWSClient.deliver_message')
     def test_qc_done(self, mock_message):
-        s3 = boto3.client('s3', region_name='us-east-1')
-        s3.create_bucket(Bucket=settings.AWS['bucket'])
+        for p in Package.objects.all():
+            p.process_status = Package.APPROVED
+            p.save()
         check_qc_status.Command().handle()
         mock_message.assert_called_once_with(
             settings.AWS['sns_topic'],
@@ -197,12 +220,6 @@ class CheckQCStatusCommandTests(TestCase):
     @mock_aws
     @patch('package_review.clients.AWSClient.deliver_message')
     def test_no_message(self, mock_message):
-        s3 = boto3.client('s3', region_name='us-east-1')
-        s3.create_bucket(Bucket=settings.AWS['bucket'])
-        s3.put_object(
-            Bucket=settings.AWS['bucket'],
-            Key='file.txt',
-            Body='')
         check_qc_status.Command().handle()
         mock_message.assert_not_called()
 
