@@ -1,36 +1,35 @@
-FROM python:3.12-bookworm AS base
+FROM python:3.12-alpine AS base
+ENV APPLICATION_NAME=digitized-image-qc
+ENV APPLICATION_DIR=digitized_image_qc
 
-RUN apt-get clean && apt-get update
-RUN apt-get install --yes ffmpeg
+# Install base system requirements
+RUN apk add --no-cache ffmpeg postgresql-dev
 
-COPY requirements.txt /var/www/digitized-image-qc/requirements.txt
-WORKDIR /var/www/digitized-image-qc
+WORKDIR /var/www/${APPLICATION_NAME}
+
+# Install Python requirements
+COPY requirements.txt .
 RUN pip install -r requirements.txt
-COPY . /var/www/digitized-image-qc
+
+# Add application code
+COPY digitized_image_qc package_review entrypoint.* manage.py ./
 
 FROM base AS build
-ARG WSGI_VERSION=5.0.0
 
-RUN apt-get install --yes apache2 apache2-dev python3.11-dev cron
-RUN wget https://github.com/GrahamDumpleton/mod_wsgi/archive/refs/tags/${WSGI_VERSION}.tar.gz \
-    && tar xvfz ${WSGI_VERSION}.tar.gz \
-    && cd mod_wsgi-${WSGI_VERSION} \
-    && ./configure --with-apxs=/usr/bin/apxs --with-python=/usr/local/bin/python \
-    && make \
-    && make install \
-    && make clean
-RUN rm -rf ${WSGI_VERSION}.tar.gz mod_wsgi-${WSGI_VERSION}
+# Install webserver requirements
+RUN apk add --no-cache apache2 apache2-dev apache2-mod-wsgi
 
-ADD ./apache/000-digitized_image_qc.conf /etc/apache2/sites-available/000-digitized_image_qc.conf
-ADD ./apache/wsgi.load /etc/apache2/mods-available/wsgi.load
-RUN a2dissite 000-default.conf
-RUN a2ensite 000-digitized_image_qc.conf
-RUN a2enmod headers
-RUN a2enmod rewrite
-RUN a2enmod wsgi
+# Disable all existing sites
+RUN find /etc/apache2/conf.d/ -type f -name "*.conf" -print0 | xargs -0 -I {} mv {} {}.disabled
+# Enable WSGI
+RUN mv /etc/apache2/conf.d/wsgi-module.conf.disabled /etc/apache2/conf.d/wsgi-module.conf
+# Create the default site
+COPY ./apache/${APPLICATION_NAME}.conf /etc/apache2/conf.d/${APPLICATION_NAME}.conf
 
-COPY crontab /etc/cron.d/crontab
-RUN crontab /etc/cron.d/crontab
+# Add cron schedule
+COPY crontab /etc/crontabs/root
 
+# Expose HTTP port
 EXPOSE 80
+
 ENTRYPOINT [ "./entrypoint.prod.sh" ]
