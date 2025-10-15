@@ -1,6 +1,7 @@
 FROM python:3.12-alpine AS base
 ENV APPLICATION_NAME=digitized-image-qc
 ENV APPLICATION_DIR=digitized_image_qc
+ENV APPLICATION_PORT=80
 
 # Install base system requirements
 RUN apk add --no-cache ffmpeg postgresql-dev
@@ -30,6 +31,6 @@ COPY ./apache/${APPLICATION_NAME}.conf /etc/apache2/conf.d/${APPLICATION_NAME}.c
 COPY crontab /etc/crontabs/root
 
 # Expose HTTP port
-EXPOSE 80
+EXPOSE ${APPLICATION_PORT}
 
 ENTRYPOINT [ "./entrypoint.prod.sh" ]
