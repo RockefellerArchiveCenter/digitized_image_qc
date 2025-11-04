@@ -42,7 +42,7 @@ class ArchivesSpaceClient(ASpace):
         Returns:
             object_title, object_uri, resource_title, resource_uri, undated_object, already_digitized (tuple): data about the object.
         """
-        results = self.client.get(f"/repositories/{self.repository}/find_by_id/archival_objects?ref_id[]={refid}&resolve[]=archival_objects&resolve[]=archival_objects::resource").json()
+        results = self.client.get(f"/repositories/{self.repository}/find_by_id/archival_objects?ref_id[]={refid}&resolve[]=archival_objects&resolve[]=archival_objects::resource&resolve[]=archival_objects::instances::top_container").json()
         try:
             if len(results['archival_objects']) != 1:
                 raise Exception(f'Expecting to get one result for ref id {refid} but got {len(results["archival_objects"])} instead.')
@@ -52,10 +52,23 @@ class ArchivesSpaceClient(ASpace):
             resource_title = resource['title']
             resource_uri = resource['uri']
             already_digitized = bool(len([i for i in object['instances'] if i['instance_type'] == 'digital_object']) > 0)
+            reel_box = self.get_indicators(object)
             undated_object = not self.has_structured_dates(object['dates'])
-            return object['display_string'], object_uri, resource_title, resource_uri, undated_object, already_digitized
+            return object['display_string'], object_uri, resource_title, resource_uri, undated_object, already_digitized, reel_box
         except KeyError:
             raise Exception(f'Unable to fetch results for {refid}. Got results {results}')
+
+    def get_indicators(self, object_json):
+        """Fetch data about indicators"""
+        indicators = []
+        if object_json.get("instances"):
+            for i in object_json["instances"]:
+                if i.get("instance_type") != "digital_object":
+                    top_container = i.get("sub_container", {}).get("top_container", {}).get("_resolved")
+                    indicators.append(top_container.get("indicator", ""))
+            return ", ".join(indicators)
+        else:
+            return None
 
 
 class AquilaClient(object):
