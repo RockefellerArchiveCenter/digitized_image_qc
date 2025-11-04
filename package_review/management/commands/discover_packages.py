@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
         refid = options['refid']
         try:
-            title, uri, resource_title, resource_uri, undated_object, already_digitized = client.get_package_data(refid)
+            title, uri, resource_title, resource_uri, undated_object, already_digitized, reel_box = client.get_package_data(refid)
             size = s3_client.calculate_package_size(refid)
             Package.objects.create(
                 title=title,
@@ -44,6 +44,7 @@ class Command(BaseCommand):
                 already_digitized=already_digitized,
                 refid=refid,
                 size_bytes=size,
+                reel_box=reel_box,
                 process_status=Package.PENDING)
             message = f'Package created: {refid}'
             self.stdout.write(self.style.SUCCESS(message))
