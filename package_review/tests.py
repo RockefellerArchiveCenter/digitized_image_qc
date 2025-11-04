@@ -176,7 +176,7 @@ class DiscoverPackagesCommandTests(TestCase):
     def test_handle(self, mock_config, mock_client, mock_message, mock_package_data, mock_init):
         """Asserts cron produces expected results."""
         mock_init.return_value = None
-        mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri', False, False
+        mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri', False, False, '1'
 
         discover_packages.Command().handle(refid="123456789")
         mock_config.assert_called_once()
