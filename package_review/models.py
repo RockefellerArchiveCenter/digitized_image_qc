@@ -18,7 +18,7 @@ class Package(models.Model):
     undated_object = models.BooleanField(default=False)
     already_digitized = models.BooleanField(default=False)
     refid = models.CharField(max_length=32)
-    reel_box = models.CharField(max_length=20, null=True, blank=True)
+    reel_box = models.CharField(max_length=255, null=True, blank=True)
     tree = models.JSONField(null=True, blank=True)
     size_bytes = models.PositiveBigIntegerField(blank=True, null=True)
     process_status = models.IntegerField(choices=PROCESS_STATUS_CHOICES)
