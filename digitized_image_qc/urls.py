@@ -21,12 +21,13 @@ from django.urls import re_path
 from package_review.views import (PackageApproveView, PackageBulkApproveView,
                                   PackageBulkRejectView, PackageCSVListView,
                                   PackageDataRefreshView, PackageDetailView,
-                                  PackageListView, PackageRejectView,
-                                  PackageTreeUpdateView)
+                                  PackageListDatatableView, PackageListView,
+                                  PackageRejectView, PackageTreeUpdateView)
 
 urlpatterns = [
     # path("admin/", admin.site.urls),
     re_path(r'^$', PackageListView.as_view(), name='package-list'),
+    re_path(r'^packages-datatable/$', PackageListDatatableView.as_view(), name='package-list-datatable'),
     re_path(r'^packages/(?P<pk>[\d]+)/$', PackageDetailView.as_view(), name='package-detail'),
     re_path(r'^packages/bulk-approve/$', PackageBulkApproveView.as_view(), name='package-bulk-approve'),
     re_path(r'^packages/bulk-reject/$', PackageBulkRejectView.as_view(), name='package-bulk-reject'),

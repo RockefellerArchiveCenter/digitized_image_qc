@@ -2,9 +2,12 @@ import csv
 from datetime import datetime
 from os import getenv
 
+from datatableview import Datatable, TextColumn
+from datatableview.views import DatatableView
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.generic import DetailView, ListView, TemplateView, View
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -191,3 +194,35 @@ class PackageTreeUpdateView(PackageActionView):
                 package.tree = "\n".join([obj for obj in sorted(objects)])
             package.save()
         return redirect('package-detail', pk=package.pk)
+
+
+class PackageListDatatable(Datatable):
+    linked_title = TextColumn("Title", sources=['title'], processor='get_linked_title')
+    select = TextColumn("Select", processor='get_select')
+    created_at = TextColumn("Created", source=['created_at'], processor='get_created_at')
+
+    class Meta:
+        model = Package
+        columns = [
+            'select',
+            'linked_title',
+            'refid',
+            'reel_box',
+            'resource_title',
+            'created_at',
+            'undated_object',
+            'already_digitized']
+
+    def get_select(self, instance, **kwargs):
+        return f'<input class="select-package" type="checkbox" id="{instance.pk}" name="{instance.pk}">'
+
+    def get_linked_title(self, instance, **kwargs):
+        return f"<a href={reverse('package-detail', kwargs={'pk': instance.pk})}>{instance}</a>"
+
+    def get_created_at(self, instance, **kwargs):
+        return instance.created_at.strftime("%x %X")
+
+
+class PackageListDatatableView(DatatableView):
+    model = Package
+    datatable_class = PackageListDatatable
