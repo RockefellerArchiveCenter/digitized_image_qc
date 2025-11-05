@@ -30,7 +30,10 @@ cryptography==46.0.3
 django==5.2.7
     # via
     #   -r requirements.in
+    #   django-datatable-view
     #   django-storages
+django-datatable-view==2.1.6
+    # via -r requirements.in
 django-storages[s3]==1.14.6
     # via -r requirements.in
 idna==3.11
@@ -56,6 +59,7 @@ pycparser==2.23
 python-dateutil==2.9.0.post0
     # via
     #   botocore
+    #   django-datatable-view
     #   moto
 pyyaml==6.0.3
     # via
