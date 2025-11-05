@@ -1,7 +1,5 @@
-.package-list__actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+.download-button {
+    float: right;
 }
 
 .table thead th:nth-child(1) {
@@ -70,4 +68,14 @@ dd {
 .pdf__viewer {
     width: 100%;
     height: 90vh;
+}
+
+/* Datatables Styles */
+
+table.dataTable th.dt-type-date div.dt-column-header {
+ flex-direction: unset;
+}
+
+table.dataTable th.dt-type-date {
+    text-align: unset;
 }
