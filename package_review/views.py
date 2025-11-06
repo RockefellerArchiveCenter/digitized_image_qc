@@ -224,5 +224,5 @@ class PackageListDatatable(Datatable):
 
 
 class PackageListDatatableView(DatatableView):
-    model = Package
+    queryset = Package.objects.filter(process_status=Package.PENDING)
     datatable_class = PackageListDatatable
