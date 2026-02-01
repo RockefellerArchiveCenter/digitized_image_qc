@@ -36,6 +36,15 @@ services:
       - AWS_REGION=us-east-1 # AWS region in which infrastructure is located (string)
       - AWS_SNS_TOPIC=arn:aws:sns:us-east-1:123456789012:digitized-image-events # ARN for SNS Topic to be posted to (string)
       - AWS_S3_BUCKET=rac-dev-image-qc # Name of S3 bucket used as storage for packages
+      - LOGIN_URL=/microsoft_authentication/login
+      - LOGOUT_URL=/
+      - MS_APP_ID=
+      - MS_APP_SECRET=
+      - MS_APP_REDIRECT=http://localhost/microsoft_authentication/callback
+      - MS_APP_SCOPES=["user.read"]
+      - MS_APP_AUTHORITY=
+      - MS_APP_VALID_EMAIL_DOMAINS=[]
+      - MS_APP_LOGOUT_URI=http://localhost
     volumes:
       - .:/var/www/digitized-image-qc
     ports:
