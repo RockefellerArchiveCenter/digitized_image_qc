@@ -6,6 +6,7 @@ Complete QC and Assign Rights for Digitized Items
 
 {% block content %}
 {% if object_list|length %}
+{% if user.is_authenticated %}
 <a href="{% url 'package-list-csv' %}" class="btn btn--sm btn--blue download-button" aria-label="Download pending packages data as CSV">Download CSV</a>
 <button id="select-toggle" class="btn btn--sm btn--gray" aria-label="Select all items" aria-pressed="false">Select all items</button>
 <form id="package-list-table" action="{% url 'package-bulk-approve' %}" method="get">
@@ -27,6 +28,9 @@ Complete QC and Assign Rights for Digitized Items
     </table>
 </form>
 <!-- Pagination -->
+{% else %}
+<p>Please log in to view and approve items.</p>
+{% endif %}
 {% else %}
 <p>No files to QC</p>
 {% endif %}
