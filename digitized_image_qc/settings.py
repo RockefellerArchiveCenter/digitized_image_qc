@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import json
 from os import getenv
 from pathlib import Path
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     "package_review",
     "storages",
     "datatableview",
+    "microsoft_authentication",
 ]
 
 MIDDLEWARE = [
@@ -128,6 +130,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = "static/"
 
+LOGIN_URL = getenv('LOGIN_URL')
+LOGIN_REDIRECT_URL = "/"
 
 # Media files
 
@@ -161,3 +165,16 @@ AWS = {
     'sns_topic': getenv('AWS_SNS_TOPIC'),
     'bucket': getenv('AWS_S3_BUCKET'),
 }
+
+MICROSOFT = {
+    "app_id": getenv('MS_APP_ID'),
+    "app_secret": getenv('MS_APP_SECRET'),
+    "redirect": getenv('MS_APP_REDIRECT'),
+    "scopes": json.loads(getenv('MS_APP_SCOPES')),
+    "authority": getenv('MS_APP_AUTHORITY'),
+    "valid_email_domains": json.loads(getenv('MS_APP_VALID_EMAIL_DOMAINS')),
+    "logout_uri": getenv('MS_APP_LOGOUT_URI')
+}
+
+MICROSOFT_CREATE_NEW_DJANGO_USER = True
+MICROSOFT_NEW_DJANGO_USER_IS_STAFF = False
