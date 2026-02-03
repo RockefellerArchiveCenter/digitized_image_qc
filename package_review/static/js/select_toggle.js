@@ -30,10 +30,11 @@ $(document).ready(function() {
         var checkboxes = document.querySelectorAll('.select-package');
 
         var button = document.getElementById('select-toggle');
-        const newButton = button.cloneNode(true);
-        button.parentNode.replaceChild(newButton, button);
-
-        var button = document.getElementById('select-toggle');
-        button.addEventListener('click', function(e) {toggleSelectAll(button, checkboxes, e)})
+        if (button) {
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            var button = document.getElementById('select-toggle');
+            button.addEventListener('click', function(e) {toggleSelectAll(button, checkboxes, e)})
+        }
     })
 });

@@ -29,6 +29,7 @@
 <pre class="mt-0">{{object.tree}}</pre>
 {% endif %}
 
+{% if user.is_authenticated %}
 <h2 class="mt-20 mb-0">Assign Rights</h2>
 {% for statement in rights_statements %}
   <div class="input-group">
@@ -41,6 +42,7 @@
     <label for={{statement.aquila_id}} class="checkbox--blue">{{statement.title}}</label>
   </div>
 {% endfor %}
+{% endif %}
 
 <div id="error-message" class="input__error" style="display:none"></div>
 
@@ -52,10 +54,12 @@
 <p class="text--orange">A digital object associated with this archival object already exists in ArchivesSpace.</p>
 {% endif %}
 
+{% if user.is_authenticated %}
 <div class="mt-50">
   <button id="approve-button" type="submit" class="btn btn--lg btn--blue">Approve Item</button>
   <button type="cancel" class="btn btn--lg btn--orange" data-micromodal-trigger="modal__reject-single">Reject Item</button>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block modals %}

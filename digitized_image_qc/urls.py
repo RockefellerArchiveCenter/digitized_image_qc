@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import re_path
+from django.urls import include, re_path
 
 from package_review.views import (PackageApproveView, PackageBulkApproveView,
                                   PackageBulkRejectView, PackageCSVListView,
@@ -36,4 +36,5 @@ urlpatterns = [
     re_path(r'^packages/refresh-data/', PackageDataRefreshView.as_view(), name='refresh-data'),
     re_path(r'^packages/update-tree/', PackageTreeUpdateView.as_view(), name='update-tree'),
     re_path(r'^packages/csv/$', PackageCSVListView.as_view(), name='package-list-csv'),
+    re_path(r'^microsoft_authentication/', include('microsoft_authentication.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
