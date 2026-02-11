@@ -38,7 +38,7 @@ class PackageCSVListView(View):
     model = Package
 
     def get(self, request, *args, **kwargs):
-        data = [["Ref ID", "Package Id", "Title", "Resource Title", "Reel/Box", "Original Filename", "Created"]]
+        data = [["Ref ID", "Package ID", "Title", "Resource Title", "Reel/Box", "Original Filename", "Created"]]
         packages = Package.objects.filter(process_status=Package.PENDING)
         for package in packages:
             data.append([
