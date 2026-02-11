@@ -214,8 +214,10 @@ class PackageListDatatable(Datatable):
             'select',
             'linked_title',
             'refid',
+            'package_id',
             'reel_box',
             'resource_title',
+            'source_filename',
             'created_at',
             'undated_object',
             'already_digitized']
