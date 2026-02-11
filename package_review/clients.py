@@ -127,6 +127,10 @@ class AWSClient(object):
                 'DataType': 'String',
                 'StringValue': package.refid,
             }
+            attributes['package_id'] = {
+                'DataType': 'String',
+                'StringValue': package.package_id,
+            }
         if traceback:
             attributes['traceback'] = {
                 'DataType': 'String',
