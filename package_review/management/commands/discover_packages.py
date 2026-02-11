@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 size_bytes=size,
                 source_filename=source_filename,
                 process_status=Package.PENDING)
-            message = f'Package created: {refid}'
+            message = f'Package created: {package_id}'
             self.stdout.write(self.style.SUCCESS(message))
         except Exception as e:
             logging.exception(e)
@@ -61,7 +61,7 @@ class Command(BaseCommand):
             sns_client.deliver_message(
                 settings.AWS['sns_topic'],
                 None,
-                f'Error discovering refid {refid}',
+                f'Error discovering package with {refid} and package_id {package_id}',
                 'FAILURE',
                 traceback=exception)
             message = f'Error creating packages: {e}'
