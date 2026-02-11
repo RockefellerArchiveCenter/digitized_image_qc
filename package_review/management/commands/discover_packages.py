@@ -38,7 +38,7 @@ class Command(BaseCommand):
         source_filename = options['source_filename']
         try:
             title, uri, resource_title, resource_uri, undated_object, already_digitized, reel_box = client.get_package_data(refid)
-            size = s3_client.calculate_package_size(refid)
+            size = s3_client.calculate_package_size(package_id)
             Package.objects.create(
                 title=title,
                 uri=uri,
