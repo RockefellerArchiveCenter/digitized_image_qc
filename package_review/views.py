@@ -38,10 +38,17 @@ class PackageCSVListView(View):
     model = Package
 
     def get(self, request, *args, **kwargs):
-        data = [["Ref ID", "Title", "Resource Title", "Reel/Box", "Created"]]
+        data = [["Ref ID", "Package Id", "Title", "Resource Title", "Reel/Box", "Original Filename", "Created"]]
         packages = Package.objects.filter(process_status=Package.PENDING)
         for package in packages:
-            data.append([package.refid, package.title, package.resource_title, package.reel_box, package.created_at])
+            data.append([
+                package.refid,
+                package.package_id,
+                package.title,
+                package.resource_title,
+                package.reel_box,
+                package.source_filename,
+                package.created_at])
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="{0}"'.format("packages-{}.csv".format(datetime.now()))
         writer = csv.writer(response)
@@ -59,7 +66,7 @@ class PackageDetailView(RightsStatementMixin, DetailView):
         """Adds PDF URL to context."""
         context = super().get_context_data(**kwargs)
         s3_storage = S3Boto3Storage()
-        context['pdf_url'] = s3_storage.url(f'{self.object.refid}/service_edited/{self.object.refid}.pdf')
+        context['pdf_url'] = s3_storage.url(f'{self.object.package_id}/service_edited/{self.object.refid}.pdf')
         return context
 
 
