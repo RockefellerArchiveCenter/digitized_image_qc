@@ -178,13 +178,20 @@ class DiscoverPackagesCommandTests(TestCase):
         mock_init.return_value = None
         mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri', False, False, '1'
 
-        discover_packages.Command().handle(refid="123456789")
+        discover_packages.Command().handle(
+            refid="123456789",
+            package_id="528ecc4e-a116-4409-834e-18798125d473",
+            source_filename="R898/123456789.tar.gz")
         mock_config.assert_called_once()
         mock_init.assert_called_once()
         mock_client.assert_called_once_with('s3', 'arn:aws:iam::123456789012:role/digitized-image-role')
         mock_message.assert_not_called()
         mock_package_data.assert_called_once()
         self.assertEqual(Package.objects.all().count(), 1)
+        package = Package.objects.all()[0]
+        self.assertEqual(package.refid, "123456789")
+        self.assertEqual(package.package_id, "528ecc4e-a116-4409-834e-18798125d473")
+        self.assertEqual(package.source_filename, "R898/123456789.tar.gz")
 
     @mock_aws
     @patch('package_review.clients.ArchivesSpaceClient.__init__')
@@ -195,7 +202,10 @@ class DiscoverPackagesCommandTests(TestCase):
         """Asserts exceptions while processing packages are handled as expected."""
         mock_package_data.side_effect = Exception("foo")
         mock_init.return_value = None
-        discover_packages.Command().handle(refid="123456789")
+        discover_packages.Command().handle(
+            refid="123456789",
+            package_id="528ecc4e-a116-4409-834e-18798125d473",
+            source_filename="R898/123456789.tar.gz")
         self.assertEqual(mock_message.call_count, 1)
 
 

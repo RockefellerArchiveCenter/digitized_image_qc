@@ -19,6 +19,8 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("refid")
+        parser.add_argument("package_id")
+        parser.add_argument("source_filename")
 
     def handle(self, *args, **options):
         configuration = get_config(f"/{getenv('ENV')}/{getenv('APP_CONFIG_PATH')}")
@@ -32,6 +34,8 @@ class Command(BaseCommand):
         s3_client = AWSClient('s3', settings.AWS['role_arn'])
 
         refid = options['refid']
+        package_id = options['package_id']
+        source_filename = options['source_filename']
         try:
             title, uri, resource_title, resource_uri, undated_object, already_digitized, reel_box = client.get_package_data(refid)
             size = s3_client.calculate_package_size(refid)
@@ -42,9 +46,11 @@ class Command(BaseCommand):
                 resource_uri=resource_uri,
                 undated_object=undated_object,
                 already_digitized=already_digitized,
+                package_id=package_id,
+                reel_box=reel_box,
                 refid=refid,
                 size_bytes=size,
-                reel_box=reel_box,
+                source_filename=source_filename,
                 process_status=Package.PENDING)
             message = f'Package created: {refid}'
             self.stdout.write(self.style.SUCCESS(message))
