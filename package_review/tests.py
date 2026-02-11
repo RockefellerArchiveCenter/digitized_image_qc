@@ -173,12 +173,14 @@ class DiscoverPackagesCommandTests(TestCase):
     @patch('package_review.clients.ArchivesSpaceClient.__init__')
     @patch('package_review.clients.ArchivesSpaceClient.get_package_data')
     @patch('package_review.clients.AWSClient.deliver_message')
+    @patch('package_review.clients.AWSClient.calculate_package_size')
     @patch('package_review.clients.AWSClient.get_client_with_role')
     @patch('package_review.management.commands.discover_packages.get_config')
-    def test_handle(self, mock_config, mock_client, mock_message, mock_package_data, mock_init):
+    def test_handle(self, mock_config, mock_client, mock_package_size, mock_message, mock_package_data, mock_init):
         """Asserts cron produces expected results."""
         mock_init.return_value = None
         mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri', False, False, '1'
+        mock_package_size.return_value = 1234
 
         discover_packages.Command().handle(
             refid="123456789",
@@ -187,6 +189,7 @@ class DiscoverPackagesCommandTests(TestCase):
         mock_config.assert_called_once()
         mock_init.assert_called_once()
         mock_client.assert_called_once_with('s3', 'arn:aws:iam::123456789012:role/digitized-image-role')
+        mock_package_size.assert_called_once_with("528ecc4e-a116-4409-834e-18798125d473")
         mock_message.assert_not_called()
         mock_package_data.assert_called_once()
         self.assertEqual(Package.objects.all().count(), 1)
@@ -194,6 +197,7 @@ class DiscoverPackagesCommandTests(TestCase):
         self.assertEqual(package.refid, "123456789")
         self.assertEqual(package.package_id, "528ecc4e-a116-4409-834e-18798125d473")
         self.assertEqual(package.source_filename, "R898/123456789.tar.gz")
+        self.assertEqual(package.size_bytes, 1234)
 
     @mock_aws
     @patch('package_review.clients.ArchivesSpaceClient.__init__')

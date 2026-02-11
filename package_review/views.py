@@ -206,7 +206,6 @@ class PackageTreeUpdateView(PackageActionView):
 class PackageListDatatable(Datatable):
     linked_title = TextColumn("Title", sources=['title'], processor='get_linked_title')
     select = TextColumn("Select", processor='get_select')
-    created_at = TextColumn("Created", source=['created_at'], processor='get_created_at')
 
     class Meta:
         model = Package
@@ -218,9 +217,7 @@ class PackageListDatatable(Datatable):
             'reel_box',
             'resource_title',
             'source_filename',
-            'created_at',
-            'undated_object',
-            'already_digitized']
+            'created_at',]
 
     def get_select(self, instance, **kwargs):
         return f'<input class="select-package" type="checkbox" id="{instance.pk}" name="{instance.pk}">'
