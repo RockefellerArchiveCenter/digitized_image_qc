@@ -17,8 +17,12 @@
 <dl class="list--unstyled">
   <dt>Ref ID:</dt>
   <dd>{{object.refid}}</dd>
+  <dt>Package ID:</dt>
+  <dd>{{object.package_id}}</dd>
   <dt>Collection:</dt>
   <dd>{{object.resource_title}}</dd>
+  <dt>Original Filename:</dt>
+  <dd>{{object.source_filename}}</dd>
 </dl>
 <a class="btn btn--sm btn--white mb-20" href="{{object.archivesspace_link}}">View in ArchivesSpace</a>
 <a class="btn btn--sm btn--white mb-20" href="{% url 'refresh-data' %}?object_list={{object.pk}}">Refresh ArchivesSpace Data</a>

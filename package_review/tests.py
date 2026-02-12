@@ -19,8 +19,8 @@ from .models import Package, RightsStatement
 
 FIXTURE_DIR = "fixtures"
 RIGHTS_DATA = [("1", "foo"), ("2", "bar")]
-PACKAGE_DATA = [("foo", "9ba10e5461d401517b0e1a53d514ec87", "9ba10e5461d401517b0e1a53d514ec87/\n----- 9ba10e5461d401517b0e1a53d514ec87_0001.pdf"),
-                ("bar", "f7d3dd6dc9c4732fa17dbd88fbe652b6", "f7d3dd6dc9c4732fa17dbd88fbe652b6/\n----- f7d3dd6dc9c4732fa17dbd88fbe652b6_0001.pdf")]
+PACKAGE_DATA = [("foo", "9ba10e5461d401517b0e1a53d514ec87", "aa2f8ade-350e-4725-b52f-e40ee0b18f45", "9ba10e5461d401517b0e1a53d514ec87/\n----- 9ba10e5461d401517b0e1a53d514ec87_0001.pdf"),
+                ("bar", "f7d3dd6dc9c4732fa17dbd88fbe652b6", "956b9082-e753-42f4-b354-d6f48231ea7b", "f7d3dd6dc9c4732fa17dbd88fbe652b6/\n----- f7d3dd6dc9c4732fa17dbd88fbe652b6_0001.pdf")]
 
 
 def create_rights_statements():
@@ -31,9 +31,10 @@ def create_rights_statements():
 
 
 def create_packages():
-    for title, refid, tree in PACKAGE_DATA:
+    for title, refid, package_id, tree in PACKAGE_DATA:
         Package.objects.create(
             title=title,
+            package_id=package_id,
             refid=refid,
             tree=tree,
             process_status=Package.PENDING)
@@ -143,6 +144,7 @@ class AWSClientTests(TestCase):
         message_body = json.loads(messages[0].body)
         self.assertEqual(message_body['MessageAttributes']['outcome']['Value'], 'SUCCESS')
         self.assertEqual(message_body['MessageAttributes']['refid']['Value'], package.refid)
+        self.assertEqual(message_body['MessageAttributes']['package_id']['Value'], package.package_id)
         self.assertEqual(message_body['MessageAttributes']['rights_ids']['Value'], "1,2")
 
     @mock_aws
@@ -171,20 +173,31 @@ class DiscoverPackagesCommandTests(TestCase):
     @patch('package_review.clients.ArchivesSpaceClient.__init__')
     @patch('package_review.clients.ArchivesSpaceClient.get_package_data')
     @patch('package_review.clients.AWSClient.deliver_message')
+    @patch('package_review.clients.AWSClient.calculate_package_size')
     @patch('package_review.clients.AWSClient.get_client_with_role')
     @patch('package_review.management.commands.discover_packages.get_config')
-    def test_handle(self, mock_config, mock_client, mock_message, mock_package_data, mock_init):
+    def test_handle(self, mock_config, mock_client, mock_package_size, mock_message, mock_package_data, mock_init):
         """Asserts cron produces expected results."""
         mock_init.return_value = None
         mock_package_data.return_value = 'object_title', 'object_uri', 'resource_title', 'resource_uri', False, False, '1'
+        mock_package_size.return_value = 1234
 
-        discover_packages.Command().handle(refid="123456789")
+        discover_packages.Command().handle(
+            refid="123456789",
+            package_id="528ecc4e-a116-4409-834e-18798125d473",
+            source_filename="R898/123456789.tar.gz")
         mock_config.assert_called_once()
         mock_init.assert_called_once()
         mock_client.assert_called_once_with('s3', 'arn:aws:iam::123456789012:role/digitized-image-role')
+        mock_package_size.assert_called_once_with("528ecc4e-a116-4409-834e-18798125d473")
         mock_message.assert_not_called()
         mock_package_data.assert_called_once()
         self.assertEqual(Package.objects.all().count(), 1)
+        package = Package.objects.all()[0]
+        self.assertEqual(package.refid, "123456789")
+        self.assertEqual(package.package_id, "528ecc4e-a116-4409-834e-18798125d473")
+        self.assertEqual(package.source_filename, "R898/123456789.tar.gz")
+        self.assertEqual(package.size_bytes, 1234)
 
     @mock_aws
     @patch('package_review.clients.ArchivesSpaceClient.__init__')
@@ -195,7 +208,10 @@ class DiscoverPackagesCommandTests(TestCase):
         """Asserts exceptions while processing packages are handled as expected."""
         mock_package_data.side_effect = Exception("foo")
         mock_init.return_value = None
-        discover_packages.Command().handle(refid="123456789")
+        discover_packages.Command().handle(
+            refid="123456789",
+            package_id="528ecc4e-a116-4409-834e-18798125d473",
+            source_filename="R898/123456789.tar.gz")
         self.assertEqual(mock_message.call_count, 1)
 
 
@@ -384,7 +400,7 @@ class PackageCsvViewTests(TestCase):
         self.assertTrue(response.headers['Content-Disposition'].startswith('attachment; filename="packages-'))
         content = response.content.decode('utf-8').split('\r\n')
         self.assertEqual(len(content), Package.objects.filter(process_status=Package.PENDING).count() + 2)
-        self.assertEqual(content[0], 'Ref ID,Title,Resource Title,Reel/Box,Created')
+        self.assertEqual(content[0], 'Ref ID,Package ID,Title,Resource Title,Reel/Box,Original Filename,Created')
 
 
 class HealthCheckEndpointTests(TestCase):
