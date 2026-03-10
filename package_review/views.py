@@ -173,9 +173,10 @@ class PackageDataRefreshView(PackageActionView):
             password=configuration.get('AS_PASSWORD'),
             repository=configuration.get('AS_REPO'))
         for package in queryset:
-            title, uri, resource_title, resource_uri, undated_object, already_digitized = client.get_package_data(package.refid)
+            title, uri, resource_title, resource_uri, undated_object, already_digitized, reel_box = client.get_package_data(package.refid)
             package.title = title
             package.uri = uri
+            package.reel_box = reel_box
             package.resource_title = resource_title
             package.resource_uri = resource_uri
             package.undated_object = undated_object
