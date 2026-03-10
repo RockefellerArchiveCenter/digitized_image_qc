@@ -356,12 +356,14 @@ class PackageActionViewTests(TestCase):
         resource_uri = "/repositories/2/resources/1"
         undated_object = True
         already_digitized = False
-        mock_data.return_value = title, object_uri, resource_title, resource_uri, undated_object, already_digitized
+        reel_box = "12"
+        mock_data.return_value = title, object_uri, resource_title, resource_uri, undated_object, already_digitized, reel_box
         package = random.choice(Package.objects.all())
         response = self.client.get(f'{reverse("refresh-data")}?object_list={package.id}')
         package.refresh_from_db()
         self.assertEqual(package.title, title)
         self.assertEqual(package.uri, object_uri)
+        self.assertEqual(package.reel_box, reel_box)
         self.assertEqual(package.resource_title, resource_title)
         self.assertEqual(package.resource_uri, resource_uri)
         self.assertEqual(package.undated_object, undated_object)
