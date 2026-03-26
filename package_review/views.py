@@ -144,7 +144,7 @@ class PackageRejectView(PackageActionView):
         """Removes files from storage directory."""
         s3_client = AWSClient('s3', settings.AWS['role_arn'])
         paginator = s3_client.client.get_paginator('list_objects_v2')
-        pages = paginator.paginate(Bucket=settings.AWS['bucket'], Prefix=package.refid)
+        pages = paginator.paginate(Bucket=settings.AWS['bucket'], Prefix=package.package_id)
 
         objects_to_delete = []
         for page in pages:

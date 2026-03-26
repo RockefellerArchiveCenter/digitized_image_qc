@@ -327,8 +327,8 @@ class PackageActionViewTests(TestCase):
     def test_reject_view(self, mock_delete):
         s3 = boto3.client('s3', region_name='us-east-1')
         s3.create_bucket(Bucket=settings.AWS['bucket'])
-        for refid in ['9ba10e5461d401517b0e1a53d514ec87', 'f7d3dd6dc9c4732fa17dbd88fbe652b6']:
-            bag_path = Path("package_review", FIXTURE_DIR, "packages", refid)
+        for package_id in ["aa2f8ade-350e-4725-b52f-e40ee0b18f45", "956b9082-e753-42f4-b354-d6f48231ea7b"]:
+            bag_path = Path("package_review", FIXTURE_DIR, "packages", package_id)
             upload_bag(s3, bag_path)
 
         pkg_list = ",".join([str(obj.id) for obj in Package.objects.all()])
