@@ -21,6 +21,7 @@ class Command(BaseCommand):
         parser.add_argument("refid")
         parser.add_argument("package_id")
         parser.add_argument("source_filename")
+        parser.add_argument("size", nargs="?", default=None)
 
     def handle(self, *args, **options):
         configuration = get_config(f"/{getenv('ENV')}/{getenv('APP_CONFIG_PATH')}")
@@ -36,9 +37,11 @@ class Command(BaseCommand):
         refid = options['refid']
         package_id = options['package_id']
         source_filename = options['source_filename']
+        size = int(0 if options['size'] is None else options['size'])
         try:
             title, uri, resource_title, resource_uri, undated_object, already_digitized, reel_box = client.get_package_data(refid)
-            size = s3_client.calculate_package_size(package_id)
+            if not size:
+                size = s3_client.calculate_package_size(package_id)
             Package.objects.create(
                 title=title,
                 uri=uri,
