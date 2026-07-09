@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.2](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.0.1...v1.0.2) (2026-07-09)
+
+
+### Bug Fixes
+
+* pin alpine version in dockerfile ([3e35885](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/3e35885a4864c03dbed276abf2e73d7121ac68e9))
+* pin alpine version in dockerfile ([3e35885](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/3e35885a4864c03dbed276abf2e73d7121ac68e9))
+* update dockerfile to pin alpine version ([d61ed15](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/d61ed157009b95df4446134e924aa9af5d59ed20))
+
 ## [1.0.1](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.0.0...v1.0.1) (2026-07-06)
 
 
