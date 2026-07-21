@@ -11,7 +11,7 @@ class Package(models.Model):
         (APPROVED, 'Approved'),
         (REJECTED, 'Rejected'))
 
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=300)
     uri = models.CharField(max_length=255)
     resource_title = models.CharField(max_length=255)
     resource_uri = models.CharField(max_length=255)
