@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.1](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.1.0...v1.1.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* **deps:** Scheduled dependency updates ([9a98084](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/9a98084f5bcf953ada3b121929ef3ae9649c7ca9))
+* **deps:** Scheduled dependency updates ([9a98084](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/9a98084f5bcf953ada3b121929ef3ae9649c7ca9))
+* **deps:** Scheduled dependency updates ([531338c](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/531338cf22acbf90d8cfe8dc0b10515fd69f992f))
+* **deps:** Scheduled dependency updates ([531338c](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/531338cf22acbf90d8cfe8dc0b10515fd69f992f))
+* **deps:** Scheduled dependency updates ([dbe60be](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/dbe60bee8c028993f6577c0ff72a2e3d50ebcb90))
+
 ## [1.0.2](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.0.1...v1.0.2) (2026-07-09)
 
 
