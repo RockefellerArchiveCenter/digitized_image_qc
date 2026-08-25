@@ -7,7 +7,6 @@
                     A tool for digitized still image and text quality control
                 </div>
             </div>
-            {% if not request.user.is_authenticated %}
             <nav class="nav-right" aria-label="Main">
                 <ul class="nav__list show-on-lg-up">
                     <li class="nav__item btn--navy">
@@ -16,9 +15,11 @@
                     <li class="nav__item btn--navy">
                         <a class="nav__link" href="{% url 'package-list' %}">All Packages</a>
                     </li>
+                    {% if not request.user.is_authenticated %}
                     <li class="nav__item btn--navy">
                         <a class="nav__link" href="{% url 'microsoft_authentication:microsoft_authentication_login' %}">Log in</a>
                     </li>
+                    {% endif %}
                 </ul>
 
                 <div class="dropdown hide-on-lg-up">
@@ -44,6 +45,7 @@
                                 All Packages
                             </a>
                         </li>
+                        {% if not request.user.is_authenticated %}
                         <li>
                             <a
                                 class="btn btn--navy dropdown__btn dropdown__btn--mobile"
@@ -51,10 +53,10 @@
                                 Log in
                             </a>
                         </li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>
-            {% endif %}
         </div>
     </div>
 </header>
