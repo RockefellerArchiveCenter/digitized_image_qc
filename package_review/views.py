@@ -26,20 +26,30 @@ class RightsStatementMixin(View):
         return context
 
 
-class PackageListView(ListView):
+class AllPackageListView(ListView):
+    """List view for all packages."""
+    template_name = 'list-all.html'
+    model = Package
+    queryset = Package.objects.all()
+
+
+class PendingPackageListView(ListView):
     """List view for packages waiting to be reviewed."""
-    template_name = 'list.html'
+    template_name = 'list-pending.html'
     model = Package
     queryset = Package.objects.filter(process_status=Package.PENDING)
 
 
 class PackageCSVListView(View):
-    """Returns CSV-formatted data from pending packages."""
+    """Returns CSV-formatted data from packages."""
     model = Package
+
+    def get_package_queryset(self):
+        raise NotImplementedError("You must implement this method.")
 
     def get(self, request, *args, **kwargs):
         data = [["Ref ID", "Package ID", "Title", "Resource Title", "Reel/Box", "Original Filename", "Created"]]
-        packages = Package.objects.filter(process_status=Package.PENDING)
+        packages = self.get_package_queryset()
         for package in packages:
             data.append([
                 package.refid,
@@ -55,6 +65,18 @@ class PackageCSVListView(View):
         for row in data:
             writer.writerow(row)
         return response
+
+
+class AllPackageCSVListView(PackageCSVListView):
+
+    def get_package_queryset(self):
+        return Package.objects.all()
+
+
+class PendingPackageCSVListView(PackageCSVListView):
+
+    def get_package_queryset(self):
+        return Package.objects.filter(process_status=Package.PENDING)
 
 
 class PackageDetailView(RightsStatementMixin, DetailView):
@@ -204,7 +226,33 @@ class PackageTreeUpdateView(PackageActionView):
         return redirect('package-detail', pk=package.pk)
 
 
-class PackageListDatatable(Datatable):
+class AllPackageListDatatable(Datatable):
+    linked_title = TextColumn("Title", sources=['title'], processor='get_linked_title')
+
+    class Meta:
+        model = Package
+        columns = [
+            'linked_title',
+            'refid',
+            'package_id',
+            'reel_box',
+            'resource_title',
+            'source_filename',
+            'created_at',]
+
+    def get_linked_title(self, instance, **kwargs):
+        return f"<a href={reverse('package-detail', kwargs={'pk': instance.pk})}>{instance}</a>"
+
+    def get_created_at(self, instance, **kwargs):
+        return instance.created_at.strftime("%x %X")
+
+
+class AllPackageListDatatableView(DatatableView):
+    queryset = Package.objects.all()
+    datatable_class = AllPackageListDatatable
+
+
+class PendingPackageListDatatable(Datatable):
     linked_title = TextColumn("Title", sources=['title'], processor='get_linked_title')
     select = TextColumn("Select", processor='get_select')
 
@@ -230,6 +278,6 @@ class PackageListDatatable(Datatable):
         return instance.created_at.strftime("%x %X")
 
 
-class PackageListDatatableView(DatatableView):
+class PendingPackageListDatatableView(DatatableView):
     queryset = Package.objects.filter(process_status=Package.PENDING)
-    datatable_class = PackageListDatatable
+    datatable_class = PendingPackageListDatatable
