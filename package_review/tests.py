@@ -329,7 +329,7 @@ class PackageActionViewTests(TestCase):
             self.assertEqual(package.process_status, Package.APPROVED)
             self.assertEqual(package.rights_ids, rights_list)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('package-list'))
+        self.assertEqual(response.url, reverse('pending-package-list'))
 
         queue = sqs_conn.get_queue_by_name(QueueName="test-queue")
         messages = queue.receive_messages(MaxNumberOfMessages=5)
@@ -356,7 +356,7 @@ class PackageActionViewTests(TestCase):
             MaxKeys=1)['KeyCount']
         assert found == 0
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('package-list'))
+        self.assertEqual(response.url, reverse('pending-package-list'))
 
     @patch('package_review.clients.ArchivesSpaceClient.__init__')
     @patch('package_review.clients.ArchivesSpaceClient.get_package_data')
