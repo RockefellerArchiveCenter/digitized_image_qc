@@ -7,12 +7,19 @@
                     A tool for digitized still image and text quality control
                 </div>
             </div>
-            {% if not request.user.is_authenticated %}
             <nav class="nav-right" aria-label="Main">
                 <ul class="nav__list show-on-lg-up">
                     <li class="nav__item btn--navy">
+                        <a class="nav__link" href="{% url 'pending-package-list' %}">Pending Packages</a>
+                    </li>
+                    <li class="nav__item btn--navy">
+                        <a class="nav__link" href="{% url 'package-list' %}">All Packages</a>
+                    </li>
+                    {% if not request.user.is_authenticated %}
+                    <li class="nav__item btn--navy">
                         <a class="nav__link" href="{% url 'microsoft_authentication:microsoft_authentication_login' %}">Log in</a>
                     </li>
+                    {% endif %}
                 </ul>
 
                 <div class="dropdown hide-on-lg-up">
@@ -22,21 +29,34 @@
                         aria-expanded="false">
                         <span class="material-icon">menu</span>
                     </button>
-                    <ul
-                        class="dropdown__list dropdown__list--mobile list--unstyled dropdown__list--navy dropdown__list--slide-left closed"
+                    <ul class="dropdown__list dropdown__list--mobile list--unstyled dropdown__list--navy dropdown__list--slide-left closed"
                         id="nav-toggle-menu">
                         <li>
-                        <a
-                            class="btn btn--navy dropdown__btn dropdown__btn--mobile"
-                            href="{% url 'microsoft_authentication:microsoft_authentication_login' %}"
-                            tabindex="-1">
-                            Log in
-                        </a>
+                            <a
+                                class="btn btn--navy dropdown__btn dropdown__btn--mobile"
+                                href="{% url 'pending-package-list' %}">
+                                Pending Packages
+                            </a>
                         </li>
+                        <li>
+                            <a
+                                class="btn btn--navy dropdown__btn dropdown__btn--mobile"
+                                href="{% url 'package-list' %}">
+                                All Packages
+                            </a>
+                        </li>
+                        {% if not request.user.is_authenticated %}
+                        <li>
+                            <a
+                                class="btn btn--navy dropdown__btn dropdown__btn--mobile"
+                                href="{% url 'microsoft_authentication:microsoft_authentication_login' %}">
+                                Log in
+                            </a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>
-            {% endif %}
         </div>
     </div>
 </header>

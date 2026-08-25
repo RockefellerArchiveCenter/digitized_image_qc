@@ -329,7 +329,7 @@ class PackageActionViewTests(TestCase):
             self.assertEqual(package.process_status, Package.APPROVED)
             self.assertEqual(package.rights_ids, rights_list)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('package-list'))
+        self.assertEqual(response.url, reverse('pending-package-list'))
 
         queue = sqs_conn.get_queue_by_name(QueueName="test-queue")
         messages = queue.receive_messages(MaxNumberOfMessages=5)
@@ -356,7 +356,7 @@ class PackageActionViewTests(TestCase):
             MaxKeys=1)['KeyCount']
         assert found == 0
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('package-list'))
+        self.assertEqual(response.url, reverse('pending-package-list'))
 
     @patch('package_review.clients.ArchivesSpaceClient.__init__')
     @patch('package_review.clients.ArchivesSpaceClient.get_package_data')
@@ -410,12 +410,13 @@ class PackageCsvViewTests(TestCase):
 
     def test_csv_view(self):
         """Assert response returns correct headers and content."""
-        response = self.client.get(reverse("package-list-csv"))
-        self.assertEqual(response.headers['Content-Type'], 'text/csv')
-        self.assertTrue(response.headers['Content-Disposition'].startswith('attachment; filename="packages-'))
-        content = response.content.decode('utf-8').split('\r\n')
-        self.assertEqual(len(content), Package.objects.filter(process_status=Package.PENDING).count() + 2)
-        self.assertEqual(content[0], 'Ref ID,Package ID,Title,Resource Title,Reel/Box,Original Filename,Created')
+        for view_string in ['package-list-csv', 'pending-package-list-csv']:
+            response = self.client.get(reverse(view_string))
+            self.assertEqual(response.headers['Content-Type'], 'text/csv')
+            self.assertTrue(response.headers['Content-Disposition'].startswith('attachment; filename="packages-'))
+            content = response.content.decode('utf-8').split('\r\n')
+            self.assertEqual(len(content), Package.objects.filter(process_status=Package.PENDING).count() + 2)
+            self.assertEqual(content[0], 'Ref ID,Package ID,Title,Resource Title,Reel/Box,Original Filename,Created')
 
 
 class HealthCheckEndpointTests(TestCase):

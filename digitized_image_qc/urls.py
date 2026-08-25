@@ -18,16 +18,23 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, re_path
 
-from package_review.views import (PackageApproveView, PackageBulkApproveView,
-                                  PackageBulkRejectView, PackageCSVListView,
+from package_review.views import (AllPackageCSVListView,
+                                  AllPackageListDatatableView,
+                                  AllPackageListView, PackageApproveView,
+                                  PackageBulkApproveView,
+                                  PackageBulkRejectView,
                                   PackageDataRefreshView, PackageDetailView,
-                                  PackageListDatatableView, PackageListView,
-                                  PackageRejectView, PackageTreeUpdateView)
+                                  PackageRejectView, PackageTreeUpdateView,
+                                  PendingPackageCSVListView,
+                                  PendingPackageListDatatableView,
+                                  PendingPackageListView)
 
 urlpatterns = [
     # path("admin/", admin.site.urls),
-    re_path(r'^$', PackageListView.as_view(), name='package-list'),
-    re_path(r'^packages-datatable/$', PackageListDatatableView.as_view(), name='package-list-datatable'),
+    re_path(r'^$', PendingPackageListView.as_view(), name='pending-package-list'),
+    re_path(r'^pending-packages-datatable/$', PendingPackageListDatatableView.as_view(), name='pending-package-list-datatable'),
+    re_path(r'^packages/$', AllPackageListView.as_view(), name='package-list'),
+    re_path(r'^packages-datatable/$', AllPackageListDatatableView.as_view(), name='package-list-datatable'),
     re_path(r'^packages/(?P<pk>[\d]+)/$', PackageDetailView.as_view(), name='package-detail'),
     re_path(r'^packages/bulk-approve/$', PackageBulkApproveView.as_view(), name='package-bulk-approve'),
     re_path(r'^packages/bulk-reject/$', PackageBulkRejectView.as_view(), name='package-bulk-reject'),
@@ -35,6 +42,7 @@ urlpatterns = [
     re_path(r'^packages/reject/', PackageRejectView.as_view(), name='package-reject'),
     re_path(r'^packages/refresh-data/', PackageDataRefreshView.as_view(), name='refresh-data'),
     re_path(r'^packages/update-tree/', PackageTreeUpdateView.as_view(), name='update-tree'),
-    re_path(r'^packages/csv/$', PackageCSVListView.as_view(), name='package-list-csv'),
+    re_path(r'^packages/csv/$', AllPackageCSVListView.as_view(), name='package-list-csv'),
+    re_path(r'^packages/pending/csv/$', PendingPackageCSVListView.as_view(), name='pending-package-list-csv'),
     re_path(r'^microsoft_authentication/', include('microsoft_authentication.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
