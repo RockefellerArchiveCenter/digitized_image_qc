@@ -17,5 +17,13 @@
             serverSide: true,
 			fixedHeader: true,
         })
+        
+        new DataTable('#pending-package-list', {
+            ajax: "{% url 'pending-package-list-datatable' %}",
+            processing: true,
+            serverSide: true,
+			fixedHeader: true,
+        })
     })
+
 </script>

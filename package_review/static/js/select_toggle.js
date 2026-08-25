@@ -26,7 +26,7 @@ function toggleSelectAll(button, checkboxes, e) {
 $(document).ready(function() {
 
     // Wait for datatable to be rendered
-    $('#package-list').on('draw.dt', function(e) {
+    $('#pending-package-list').on('draw.dt', function(e) {
         var checkboxes = document.querySelectorAll('.select-package');
 
         var button = document.getElementById('select-toggle');
