@@ -140,7 +140,7 @@ class PackageApproveView(PackageActionView):
                 'SUCCESS',
                 rights_ids=package.rights_ids,
                 size=package.size_bytes)
-        return redirect('package-list')
+        return redirect('pending-package-list')
 
 
 class PackageRejectView(PackageActionView):
@@ -160,7 +160,7 @@ class PackageRejectView(PackageActionView):
                 self.outcome)
             package.process_status = Package.REJECTED
             package.save()
-        return redirect('package-list')
+        return redirect('pending-package-list')
 
     def delete_files(self, package):
         """Removes files from storage directory."""
