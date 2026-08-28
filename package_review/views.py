@@ -228,6 +228,8 @@ class PackageTreeUpdateView(PackageActionView):
 
 class AllPackageListDatatable(Datatable):
     linked_title = TextColumn("Title", sources=['title'], processor='get_linked_title')
+    status = TextColumn("Status", sources=['process_status'], processor='get_process_status')
+    created_at = TextColumn("Created", sources=['created_at'], processor='get_created_at')
 
     class Meta:
         model = Package
@@ -235,13 +237,16 @@ class AllPackageListDatatable(Datatable):
             'linked_title',
             'refid',
             'package_id',
-            'reel_box',
+            'status',
             'resource_title',
             'source_filename',
             'created_at',]
 
     def get_linked_title(self, instance, **kwargs):
         return f"<a href={reverse('package-detail', kwargs={'pk': instance.pk})}>{instance}</a>"
+
+    def get_process_status(self, instance, **kwargs):
+        return instance.get_process_status_display()
 
     def get_created_at(self, instance, **kwargs):
         return instance.created_at.strftime("%x %X")
@@ -255,6 +260,7 @@ class AllPackageListDatatableView(DatatableView):
 class PendingPackageListDatatable(Datatable):
     linked_title = TextColumn("Title", sources=['title'], processor='get_linked_title')
     select = TextColumn("Select", processor='get_select')
+    created_at = TextColumn("Created", sources=['created_at'], processor='get_created_at')
 
     class Meta:
         model = Package
