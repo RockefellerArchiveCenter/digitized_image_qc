@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.2.0...v1.2.1) (2026-08-28)
+
+
+### Bug Fixes
+
+* update datatable columns and column definitions ([b7891c9](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/b7891c92f8bcd855fb74c86c3150511dc1101410))
+* update table columns and display ([36634e5](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/36634e5c48531a6a90fdfd94fafd634fc9248dfb))
+
 ## [1.1.1](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.1.0...v1.1.1) (2026-08-07)
 
 
