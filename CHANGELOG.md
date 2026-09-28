@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.3](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.2.2...v1.2.3) (2026-09-28)
+
+
+### Bug Fixes
+
+* update postgres version ([d301a17](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/d301a179e9f37fb707d4749dc3998f0a45163f59))
+* update postgres version ([da86e2f](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/da86e2f1c7e2b2a0f405a60077e4f8fa836735e3))
+
 ## [1.2.2](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.2.1...v1.2.2) (2026-09-08)
 
 
