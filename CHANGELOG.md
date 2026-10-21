@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.5](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.2.4...v1.2.5) (2026-10-21)
+
+
+### Bug Fixes
+
+* update pip ([84a816b](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/84a816be4482476aa1876dae617e436764428e1b))
+* update pip ([84a816b](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/84a816be4482476aa1876dae617e436764428e1b))
+* update pip ([e8d6895](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/e8d68958ee61f2bfa8428b4652104b6c74775395))
+* update pip ([e8d6895](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/e8d68958ee61f2bfa8428b4652104b6c74775395))
+* update pip ([e72cb76](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/e72cb766bfaa4739da7c5fcf6e812881db606364))
+
 ## [1.2.4](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.2.3...v1.2.4) (2026-10-05)
 
 
