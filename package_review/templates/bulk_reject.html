@@ -15,9 +15,5 @@
     {% csrf_token %}
     <button type="submit" class="btn btn--sm btn--blue">Reject Items</button>
 </form>
-<a href="{% url 'package-list' %}" type="cancel" class="btn btn--sm btn--orange">Cancel</a>
-{% endblock %}
-
-{% block modals %}
-{% include 'modal_approve_bulk.html' %}
+<a href="{% url 'package-list' %}" class="btn btn--sm btn--orange">Cancel</a>
 {% endblock %}
