@@ -6,7 +6,7 @@
 {% if object_list|length %}
 {% if user.is_authenticated %}
 <a href="{% url 'pending-package-list-csv' %}" class="btn btn--sm btn--blue download-button" aria-label="Download CSV of pending packages data">Download CSV</a>
-<button id="select-toggle" class="btn btn--sm btn--gray" aria-label="Select all items" aria-pressed="false">Select all items</button>
+<button id="select-toggle" class="btn btn--sm btn--gray">Select all items</button>
 <form id="package-list-table" action="{% url 'package-bulk-approve' %}" method="get">
     <button type="submit" class="btn btn--sm btn--blue btn--list">Assign Rights to Selected Items</button>
     <button type="submit" formaction="{% url 'package-bulk-reject' %}" class="btn btn--sm btn--orange btn--list">Reject Selected Items</button>

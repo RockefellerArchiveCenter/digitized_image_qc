@@ -2,6 +2,10 @@
     float: right;
 }
 
+#select-toggle {
+    min-width: 15em;
+}
+
 .table thead th:nth-child(1) {
     width: 10%;
 }
