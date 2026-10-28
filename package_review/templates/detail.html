@@ -11,16 +11,24 @@
   type="application/pdf">
 </object>
 
-<h2 class="mt-20 mb-0">Additional Description</h2>
-<dl class="list--unstyled">
-  <dt>Ref ID:</dt>
-  <dd>{{object.refid}}</dd>
-  <dt>Package ID:</dt>
-  <dd>{{object.package_id}}</dd>
-  <dt>Collection:</dt>
-  <dd>{{object.resource_title}}</dd>
-  <dt>Original Filename:</dt>
-  <dd>{{object.source_filename}}</dd>
+<h2 class="mt-20">Additional Description</h2>
+<dl class="summary-list">
+  <div class="summary-list__row">
+    <dt class="summary-list__key">Ref ID</dt>
+    <dd class="summary-list__value">{{object.refid}}</dd>
+  </div>
+  <div class="summary-list__row">
+    <dt class="summary-list__key">Package ID</dt>
+    <dd class="summary-list__value">{{object.package_id}}</dd>
+  </div>
+  <div class="summary-list__row">
+    <dt class="summary-list__key">Collection</dt>
+    <dd class="summary-list__value">{{object.resource_title}}</dd>
+  </div>
+  <div class="summary-list__row">
+    <dt class="summary-list__key">Original Filename</dt>
+    <dd class="summary-list__value">{{object.source_filename}}</dd>
+  </div>
 </dl>
 <a class="btn btn--sm btn--white mb-20" href="{{object.archivesspace_link}}">View in ArchivesSpace</a>
 <a class="btn btn--sm btn--white mb-20" href="{% url 'refresh-data' %}?object_list={{object.pk}}">Refresh ArchivesSpace Data</a>
@@ -32,21 +40,22 @@
 {% endif %}
 
 {% if user.is_authenticated and object.process_status == 0 %}
-<h2 class="mt-20 mb-0">Assign Rights</h2>
-{% for statement in rights_statements %}
-  <div class="input-group">
-    <input
-      type="checkbox"
-      class="checkbox--rights"
-      id={{statement.aquila_id}}
-      name="{{statement.title}}"
-    />
-    <label for={{statement.aquila_id}} class="checkbox--blue">{{statement.title}}</label>
-  </div>
-{% endfor %}
+<fieldset>
+  <legend><h2 class="mt-20 mb-0">Assign Rights</h2></legend>
+  {% for statement in rights_statements %}
+    <div class="input-group">
+      <input
+        type="checkbox"
+        class="checkbox checkbox--blue checkbox--rights"
+        id={{statement.aquila_id}}
+        name="{{statement.title}}"
+      />
+      <label for={{statement.aquila_id}}>{{statement.title}}</label>
+    </div>
+  {% endfor %}
+</fieldset>
+<div id="error-message" role="alert"></div>
 {% endif %}
-
-<div id="error-message" class="input__error" style="display:none"></div>
 
 {% if object.undated_object  %}
 <p class="text--orange">This package may be associated with an object in ArchivesSpace that does not have structured dates.</p>

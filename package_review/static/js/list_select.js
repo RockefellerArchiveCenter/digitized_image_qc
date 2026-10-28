@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkboxLength = checkboxes.length;
     const firstCheckbox = checkboxLength > 0 ? checkboxes[0] : null;
     approveButton = document.getElementById('approve-button')
+    const errorElement = document.getElementById('error-message')
 
     function init() {
         if (firstCheckbox) {
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function checkValidity() {
         const errorMessage = !isChecked() ? 'At least one checkbox must be selected.' : '';
         firstCheckbox.setCustomValidity(errorMessage);
-        firstCheckbox.reportValidity()
+        errorElement.innerHTML = errorMessage ? `<p class="input__error">${errorMessage}</p>` : '';
         return isChecked()
     }
 

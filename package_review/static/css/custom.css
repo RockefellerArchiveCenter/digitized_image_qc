@@ -22,11 +22,6 @@
     width: 15%;
 }
 
-.table--package-list input[type=checkbox] {
-    width: unset;
-    margin-left: 10px;
-}  
-
 .modal__overlay {
     display: none;
 }
@@ -39,8 +34,12 @@ form {
     display: inline;
 }
 
-.checkbox--rights {
-    width: auto;
+fieldset legend h2 {
+    text-transform: none;
+}
+
+.table--package-list .checkbox + label {
+    height: 16px;
 }
 
 .modal--small {
@@ -54,19 +53,10 @@ form {
     margin-top: 0;
 }
 
-dt:before {
-    content: "";
-    display: block;
-}
-
-dt {
-    display: inline;
-    font-weight: bold;
-}
-
-dd {
-    display: inline;
-    margin-left: 5px;
+@media screen and (min-width: 1024px) {
+    .summary-list {
+        width: 50%;
+    }
 }
 
 .pdf__viewer {

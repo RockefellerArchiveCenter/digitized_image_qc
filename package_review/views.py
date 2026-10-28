@@ -275,7 +275,7 @@ class PendingPackageListDatatable(Datatable):
             'created_at',]
 
     def get_select(self, instance, **kwargs):
-        return f"<input class='select-package' type='checkbox' id='select-{instance.pk}' name='{instance.pk}' aria-labelledby='select-header package-title-{instance.pk}'>"
+        return f"<input class='checkbox checkbox--blue select-package' type='checkbox' id='select-{instance.pk}' name='{instance.pk}' aria-labelledby='select-header package-title-{instance.pk}'><label for='select-{instance.pk}'></label>"
 
     def get_linked_title(self, instance, **kwargs):
         return f"<a id='package-title-{instance.pk}' href='{reverse('package-detail', kwargs={'pk': instance.pk})}'>{instance}</a>"
