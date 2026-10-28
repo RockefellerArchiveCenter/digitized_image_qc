@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
-{% block h1_title %}
-{{object.title}}
-{% endblock %}
+{% block h1_title %}{% block title %}{{object.title}}{% endblock %}{% endblock %}
 
 {% block content %}
 <a class="btn btn--lg btn--blue mb-20" href="{{pdf_url}}" download>Download PDF</a>

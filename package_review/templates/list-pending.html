@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
-{% block h1_title %}
-Complete QC and Assign Rights for Digitized Items
-{% endblock %}
+{% block h1_title %}{% block title %}Complete QC and Assign Rights for Digitized Items{% endblock %}{% endblock %}
 
 {% block content %}
 {% if object_list|length %}

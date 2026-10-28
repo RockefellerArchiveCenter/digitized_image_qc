@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 {% load tags %}
 
-{% block h1_title %}
-Reject Items
-{% endblock %}
+{% block h1_title %}{% block title %}Reject Items{% endblock %}{% endblock %}
 
 {% block content %}
 <h2>Selected Items to Reject</h2>

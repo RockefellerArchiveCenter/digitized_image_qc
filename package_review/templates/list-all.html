@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
-{% block h1_title %}
-View All Packages
-{% endblock %}
+{% block h1_title %}{% block title %}View All Packages{% endblock %}{% endblock %}
 
 {% block content %}
 {% if object_list|length %}
