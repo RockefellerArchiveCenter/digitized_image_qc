@@ -30,10 +30,10 @@
     <dd class="summary-list__value">{{object.source_filename}}</dd>
   </div>
 </dl>
-<a class="btn btn--sm btn--white mb-20" href="{{object.archivesspace_link}}">View in ArchivesSpace</a>
-<a class="btn btn--sm btn--white mb-20" href="{% url 'refresh-data' %}?object_list={{object.pk}}">Refresh ArchivesSpace Data</a>
+<a class="btn btn--sm btn--light-blue mb-20" href="{{object.archivesspace_link}}">View in ArchivesSpace</a>
+<a class="btn btn--sm btn--light-blue mb-20" href="{% url 'refresh-data' %}?object_list={{object.pk}}">Refresh ArchivesSpace Data</a>
 
-<a class="btn btn--sm btn--white mb-20" href="{% url 'update-tree' %}?object_list={{object.pk}}">{% if object.tree %}Update{% else %}Fetch{% endif %} Package Structure</a>
+<a class="btn btn--sm btn--light-blue mb-20" href="{% url 'update-tree' %}?object_list={{object.pk}}">{% if object.tree %}Update{% else %}Fetch{% endif %} Package Structure</a>
 {% if object.tree %}
 <h2 class="mb-0">Package Structure</h2>
 <pre class="mt-0">{{object.tree}}</pre>
