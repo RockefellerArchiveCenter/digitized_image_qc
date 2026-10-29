@@ -1,9 +1,46 @@
 .download-button {
-    float: right;
+    justify-content: center;
+    margin-bottom: 8px;
+    width: 100%;
+
+    @media screen and (min-width: 36.25em) {
+        float: right;
+        width: auto;
+    }
+
+    @media screen and (min-width: 64em) {
+        margin-bottom: 0;
+    }
 }
 
 #select-toggle {
+    justify-content: center;
+    margin-bottom: 8px;
     min-width: 15em;
+    width: 100%;
+
+    @media screen and (min-width: 36.25em) {
+        justify-content: flex-start;
+        width: auto;
+    }
+
+    @media screen and (min-width: 64em) {
+        margin-bottom: 0;
+    }
+}
+
+.btn--list {
+    justify-content: center;
+    margin-bottom: 8px;
+    width: 100%;
+
+    @media screen and (min-width: 36.25em) {
+        width: auto;
+    }
+
+    @media screen and (min-width: 64em) {
+        margin-bottom: 0;
+    }
 }
 
 .table thead th:nth-child(1) {
