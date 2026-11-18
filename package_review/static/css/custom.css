@@ -110,3 +110,7 @@ table.dataTable th.dt-type-date div.dt-column-header {
 table.dataTable th.dt-type-date {
     text-align: unset;
 }
+
+div.dt-container .dt-search input {
+    margin-left: 0;
+}
