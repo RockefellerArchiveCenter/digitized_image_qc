@@ -12,11 +12,13 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
   const menu = document.getElementById('nav-toggle-menu');
   menu.classList.toggle('active');
   menu.classList.toggle('closed');
+});
 
-  // Toggles tabindex values for each link
-  const links = menu.querySelectorAll('.dropdown__btn--mobile');
-  const isActive = menu.classList.contains('active');
-  links.forEach(link => {
-    link.tabIndex = isActive ? 0 : -1;
-  });
+// Closes the menu on Esc and returns focus to the nav-toggle
+document.addEventListener('keydown', function(event) {
+  const toggle = document.getElementById('nav-toggle');
+  if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+    toggle.click();
+    toggle.focus();
+  }
 });
