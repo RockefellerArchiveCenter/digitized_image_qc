@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.7](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.2.6...v1.2.7) (2026-11-19)
+
+
+### Bug Fixes
+
+* update deploy ([ecc9467](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/ecc946751769e40a246d2b09942108616709d172))
+* update deploy ([4cfe7d6](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/4cfe7d6c79d950166fa382dc29ea69dde67428ae))
+* update deploy workflow ([c4bf5a4](https://github.com/RockefellerArchiveCenter/digitized_image_qc/commit/c4bf5a4d21514361edf084d95d7dd5117965b7a8))
+
 ## [1.2.6](https://github.com/RockefellerArchiveCenter/digitized_image_qc/compare/v1.2.5...v1.2.6) (2026-11-02)
 
 
