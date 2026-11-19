@@ -1,5 +1,46 @@
 .download-button {
-    float: right;
+    justify-content: center;
+    margin-bottom: 8px;
+    width: 100%;
+
+    @media screen and (min-width: 36.25em) {
+        float: right;
+        width: auto;
+    }
+
+    @media screen and (min-width: 64em) {
+        margin-bottom: 0;
+    }
+}
+
+#select-toggle {
+    justify-content: center;
+    margin-bottom: 8px;
+    min-width: 15em;
+    width: 100%;
+
+    @media screen and (min-width: 36.25em) {
+        justify-content: flex-start;
+        width: auto;
+    }
+
+    @media screen and (min-width: 64em) {
+        margin-bottom: 0;
+    }
+}
+
+.btn--list {
+    justify-content: center;
+    margin-bottom: 8px;
+    width: 100%;
+
+    @media screen and (min-width: 36.25em) {
+        width: auto;
+    }
+
+    @media screen and (min-width: 64em) {
+        margin-bottom: 0;
+    }
 }
 
 .table thead th:nth-child(1) {
@@ -18,11 +59,6 @@
     width: 15%;
 }
 
-.table--package-list input[type=checkbox] {
-    width: unset;
-    margin-left: 10px;
-}  
-
 .modal__overlay {
     display: none;
 }
@@ -35,8 +71,12 @@ form {
     display: inline;
 }
 
-.checkbox--rights {
-    width: auto;
+fieldset legend h2 {
+    text-transform: none;
+}
+
+.table--package-list .checkbox + label {
+    height: 16px;
 }
 
 .modal--small {
@@ -50,19 +90,10 @@ form {
     margin-top: 0;
 }
 
-dt:before {
-    content: "";
-    display: block;
-}
-
-dt {
-    display: inline;
-    font-weight: bold;
-}
-
-dd {
-    display: inline;
-    margin-left: 5px;
+@media screen and (min-width: 1024px) {
+    .summary-list {
+        width: 50%;
+    }
 }
 
 .pdf__viewer {
@@ -78,4 +109,8 @@ table.dataTable th.dt-type-date div.dt-column-header {
 
 table.dataTable th.dt-type-date {
     text-align: unset;
+}
+
+div.dt-container .dt-search input {
+    margin-left: 0;
 }

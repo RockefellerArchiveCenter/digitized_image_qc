@@ -6,16 +6,12 @@ function toggleSelectAll(button, checkboxes, e) {
 
         if (button.innerHTML == selectText) {
             button.innerHTML = deselectText
-            button.ariaLabel = deselectText
-            button.ariaPressed = true
             checkboxes.forEach(function(el) {
                     el.checked = true
                 }
             )
         } else {
             button.innerHTML = selectText
-            button.ariaLabel = selectText
-            button.ariaPressed = false
             checkboxes.forEach(function(el) {
                     el.checked = false
                 }

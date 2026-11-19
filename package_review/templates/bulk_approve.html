@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
-{% block h1_title %}
-Assign Rights and Approve Items
-{% endblock %}
+{% block h1_title %}{% block title %}Assign Rights and Approve Items{% endblock %}{% endblock %}
 
 {% block content %}
 <div>
@@ -13,22 +11,23 @@ Assign Rights and Approve Items
         {% endfor %}
     </ul>
 </div>
-<div>
-    <h2>Choose one or more rights statements to apply to items</h2>
+<fieldset>
+    <legend><h2>Choose one or more rights statements to apply to items</h2></legend>
     {% for statement in rights_statements %}
     <div class="input-group">
         <input
         type="checkbox"
-        class="checkbox--rights"
+        class="checkbox checkbox--blue checkbox--rights"
         id={{statement.aquila_id}}
         name="{{statement.title}}"
         />
-        <label for={{statement.aquila_id}} class="checkbox--blue">{{statement.title}}</label>
+        <label for={{statement.aquila_id}}>{{statement.title}}</label>
     </div>
     {% endfor %}
-</div>
+</fieldset>
+<div id="error-message" role="alert"></div>
 
-<div class="mt-20"></div>
+<div class="mt-20">
     <button id="approve-button" type="submit" class="btn btn--sm btn--blue">Approve Items</button>
     <a href="{% url 'package-list' %}" class="btn btn--sm btn--orange">Cancel</a>
 </div>
